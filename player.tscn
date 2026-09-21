@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://itrfddb0i63k"]
+
+[ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://bn737ikhuloix" path="res://Player.cs" id="1_onrkg"]
+[ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://weapon.tscn" id="3_i3pqv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
+
+[node name="Character" type="CharacterBody2D" unique_id=374600470 groups=["player_team"]]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_onrkg")
+
+[node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("1_4flbx")
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=3025094]
+shape = SubResource("CircleShape2D_27m30")
+
+[node name="Weapon" parent="." unique_id=625231334 instance=ExtResource("3_i3pqv")]

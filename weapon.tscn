@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bl33hbe7l4sex"]
+
+[ext_resource type="Script" uid="uid://cwg5fa0wqa21d" path="res://Weapon.cs" id="1_o2wld"]
+[ext_resource type="PackedScene" uid="uid://bfq4g4l4bjnvi" path="res://Projectile.tscn" id="2_3fy1u"]
+[ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="2_8xwfw"]
+
+[node name="Weapon" type="Node2D" unique_id=625231334]
+script = ExtResource("1_o2wld")
+ProjectileScene = ExtResource("2_3fy1u")
+
+[node name="FiringPoint" type="Node2D" parent="." unique_id=871001373]
+unique_name_in_owner = true
+
+[node name="Display" type="Sprite2D" parent="." unique_id=1347557365]
+unique_name_in_owner = true
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_8xwfw")
+
+[node name="FireTimer" type="Timer" parent="." unique_id=454798403]
+unique_name_in_owner = true
+wait_time = 0.75
+one_shot = true
+
+[node name="ReloadTimer" type="Timer" parent="." unique_id=1272346884]
+unique_name_in_owner = true
+wait_time = 3.0
+one_shot = true
