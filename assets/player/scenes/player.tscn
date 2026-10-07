@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://itrfddb0i63k"]
+
+[ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://bn737ikhuloix" path="res://assets/player/src/Player.cs" id="1_onrkg"]
+[ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_i3pqv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
+
+[node name="Character" type="CharacterBody2D" unique_id=374600470 groups=["player_team"]]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_onrkg")
+
+[node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("1_4flbx")
+
+[node name="BulletsBar" type="TextureProgressBar" parent="Visual" unique_id=1195326967]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+clip_contents = true
+offset_right = 128.0
+offset_bottom = 128.0
+max_value = 20.0
+value = 3.0
+texture_progress = ExtResource("1_4flbx")
+
+[node name="ReloadBar" type="ProgressBar" parent="Visual" unique_id=1842169862]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+offset_right = 4.0
+offset_bottom = 27.0
+max_value = 1.0
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=3025094]
+shape = SubResource("CircleShape2D_27m30")
+
+[node name="Weapon" parent="." unique_id=625231334 instance=ExtResource("3_i3pqv")]

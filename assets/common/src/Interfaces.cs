@@ -9,3 +9,13 @@ public interface IDamagable
     public void TakeDamage(int damage);
 
 }
+
+public interface IMover
+{
+    public float Speed { get; }
+
+    public void MoveInDir(Vector2 dir)
+    {
+
+    }
+}
