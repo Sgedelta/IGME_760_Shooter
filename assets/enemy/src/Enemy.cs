@@ -81,6 +81,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover
         if (Health < 0)
         {
             EmitSignal(SignalName.OnKilled);
+            QueueFree();
         }
     }
 

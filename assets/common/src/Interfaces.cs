@@ -4,18 +4,18 @@ using System;
 
 public interface IDamagable
 {
-    public int Health { get; }
+	public int Health { get; }
 
-    public void TakeDamage(int damage);
+	public void TakeDamage(int damage);
 
 }
 
 public interface IMover
 {
-    public float Speed { get; }
+	public float Speed { get; }
 
-    public void MoveInDir(Vector2 dir)
-    {
+	public void MoveInDir(Vector2 dir)
+	{
 
-    }
+	}
 }

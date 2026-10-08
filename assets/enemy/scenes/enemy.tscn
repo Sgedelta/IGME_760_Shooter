@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dy26tvmyhijwm" path="res://assets/enemy/src/Enemy.cs" id="1_4gyqm"]
 [ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="2_qi2p4"]
+[ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_oq0ac"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
 
@@ -19,3 +20,5 @@ texture = ExtResource("2_qi2p4")
 shape = SubResource("CircleShape2D_27m30")
 
 [node name="NavAgent" type="NavigationAgent2D" parent="." unique_id=1656022149]
+
+[node name="Weapon" parent="." unique_id=625231334 instance=ExtResource("3_oq0ac")]
