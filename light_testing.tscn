@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://dymj64gyim2mq"]
+
+[ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="1_ctgup"]
+
+[sub_resource type="Gradient" id="Gradient_7vhbv"]
+offsets = PackedFloat32Array(0, 0.748, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_voj06"]
+gradient = SubResource("Gradient_7vhbv")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ctgup"]
+polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7vhbv"]
+polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_gmkv7"]
+polygon = PackedVector2Array(59.1, -64, -59, -64, -63.8, -59, -64, 61, -60.3, 64, 59.6, 64, 63.9, 59, 64, -61.1)
+
+[node name="LightTesting" type="Node2D" unique_id=1361379058]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1545580015]
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer" unique_id=1739146940]
+position = Vector2(467.99997, 383.99997)
+scale = Vector2(10, 10)
+texture = ExtResource("1_ctgup")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="CanvasLayer" unique_id=372239313]
+color = Color(0, 0, 0, 1)
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=660869828]
+layer = 2
+
+[node name="CanvasModulate2" type="CanvasModulate" parent="CanvasLayer2" unique_id=1382316060]
+color = Color(0, 0, 0, 1)
+
+[node name="PointLight2D" type="PointLight2D" parent="CanvasLayer2" unique_id=196891542]
+position = Vector2(506, 388)
+range_layer_max = 1
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_voj06")
+texture_scale = 24.01
+
+[node name="PointLight2D2" type="PointLight2D" parent="CanvasLayer2" unique_id=1357085736]
+position = Vector2(506, 388)
+range_layer_min = 1
+range_layer_max = 2
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_voj06")
+texture_scale = 30.0
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="CanvasLayer2" unique_id=100012252]
+position = Vector2(183, 166)
+occluder = SubResource("OccluderPolygon2D_ctgup")
+occluder_light_mask = 3
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="CanvasLayer2" unique_id=1414464402]
+position = Vector2(868, 369)
+occluder = SubResource("OccluderPolygon2D_7vhbv")
+
+[node name="LightOccluder2D3" type="LightOccluder2D" parent="CanvasLayer2" unique_id=613254746]
+position = Vector2(307, 542)
+occluder = SubResource("OccluderPolygon2D_gmkv7")
+
+[node name="Sprite2D2" type="Sprite2D" parent="CanvasLayer2" unique_id=2075614414]
+light_mask = 2
+position = Vector2(183, 166)
+texture = ExtResource("1_ctgup")
+
+[node name="Sprite2D3" type="Sprite2D" parent="CanvasLayer2" unique_id=1857530516]
+light_mask = 2
+position = Vector2(868, 369)
+texture = ExtResource("1_ctgup")
+
+[node name="Sprite2D4" type="Sprite2D" parent="CanvasLayer2" unique_id=2020581587]
+light_mask = 2
+position = Vector2(307, 542)
+texture = ExtResource("1_ctgup")
