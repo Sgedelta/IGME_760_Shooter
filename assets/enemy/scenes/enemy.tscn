@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_oq0ac"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
+radius = 80.00625
 
 [node name="Enemy" type="CharacterBody2D" unique_id=374600470 groups=["enemy_team"]]
 modulate = Color(1, 0.34901962, 0.24705882, 1)
@@ -13,7 +14,6 @@ motion_mode = 1
 script = ExtResource("1_4gyqm")
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
-scale = Vector2(0.16, 0.16)
 texture = ExtResource("2_qi2p4")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=3025094]

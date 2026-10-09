@@ -4,8 +4,8 @@ using System;
 public partial class Weapon : Node2D
 {
 	public Vector2 AimDir = Vector2.Zero;
-	public float DisplayOrbitRadius = 10f;
-	public float FireOrbitRadius = 15f;
+	public float DisplayOrbitRadius = 100f;
+	public float FireOrbitRadius = 125f;
 
 	[Export]
 	public PackedScene ProjectileScene;

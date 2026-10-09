@@ -5,7 +5,7 @@ using System.Diagnostics;
 public partial class Projectile : Area2D
 {
 	public Vector2 Direction = Vector2.Zero;
-	public float Speed = 50; //px/sec
+	[Export] public float Speed = 500; //px/sec
 	public bool UpdateFacing = true;
 
 

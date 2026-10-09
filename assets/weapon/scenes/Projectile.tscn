@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bfq4g4l4bjnvi"]
 
-[ext_resource type="Script" uid="uid://7hgi15yltj6n" path="res://Projectile.cs" id="1_e7peq"]
+[ext_resource type="Script" uid="uid://7hgi15yltj6n" path="res://assets/weapon/src/Projectile.cs" id="1_e7peq"]
 [ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="1_t7eop"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
-radius = 3.0
+radius = 25.1
 
 [node name="Projectile" type="Area2D" unique_id=355376619]
 top_level = true
@@ -14,7 +14,7 @@ script = ExtResource("1_e7peq")
 
 [node name="Display" type="Sprite2D" parent="." unique_id=1209131332]
 modulate = Color(0.6745098, 0.3882353, 1, 1)
-scale = Vector2(0.05, 0.05)
+scale = Vector2(0.3, 0.3)
 texture = ExtResource("1_t7eop")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=732260326]

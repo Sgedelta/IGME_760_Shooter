@@ -95,7 +95,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover
         }
         else
         {
-            velocity = velocity.MoveToward(Vector2.Zero, Speed);
+            velocity = velocity.MoveToward(Vector2.Zero, Mathf.Max(Speed/15, velocity.Length() / 10));
         }
 
         Velocity = velocity;
