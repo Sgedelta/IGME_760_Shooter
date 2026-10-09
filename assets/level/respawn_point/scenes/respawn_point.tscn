@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dpm7ruf6r400b"]
+
+[ext_resource type="Script" uid="uid://brpj16ioee7t4" path="res://assets/level/respawn_point/src/RespawnPoint.cs" id="1_dfosc"]
+
+[node name="RespawnPoint" type="Node2D" unique_id=783362345]
+script = ExtResource("1_dfosc")
