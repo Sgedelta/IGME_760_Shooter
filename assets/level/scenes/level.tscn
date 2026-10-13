@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://gdqa0jnai3d2" path="res://assets/level/src/Level.cs" id="1_p4p1v"]
 [ext_resource type="PackedScene" uid="uid://itrfddb0i63k" path="res://assets/player/scenes/player.tscn" id="2_vonw3"]
 [ext_resource type="PackedScene" uid="uid://bbqms3hyc78og" path="res://assets/enemy/scenes/enemy.tscn" id="3_oi3di"]
+[ext_resource type="PackedScene" uid="uid://xqmobj0njihn" path="res://assets/flags/scenes/flag.tscn" id="5_u0c7o"]
+[ext_resource type="PackedScene" uid="uid://1d0rhhgowvqy" path="res://assets/flags/scenes/flag_return.tscn" id="6_hca2g"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_2pp6q"]
 vertices = PackedVector2Array(2866, -206, 3235.3438, -931.34375, 3235.3438, 419.34375, 2723.3438, 419.34375, 2866, -562, 1586, -206, 1586, 818, 2723.3438, 1187.3438, 1230, 818, -419.34375, 1187.3438, -419.34375, 931.34375, 1586, -562, 1586, -818, -562, 50, 1230, 50, -931.34375, 931.34375, -931.34375, -931.34375, -562, -818)
@@ -23,6 +25,7 @@ tile_set = ExtResource("1_kci6a")
 [node name="Character" parent="." unique_id=374600470 instance=ExtResource("2_vonw3")]
 position = Vector2(-532, 345)
 Speed = 500.0
+CarryOffsetAndRot = Vector3(15, 50, 0)
 
 [node name="Camera2D" type="Camera2D" parent="Character" unique_id=131757984]
 zoom = Vector2(0.385, 0.385)
@@ -30,5 +33,11 @@ zoom = Vector2(0.385, 0.385)
 [node name="Enemy" parent="." unique_id=1189859641 instance=ExtResource("3_oi3di")]
 position = Vector2(-187, 280)
 _initialTargetPos = Vector2(110, 70)
+
+[node name="Flag" parent="." unique_id=1500888540 groups=["enemy_team"] instance=ExtResource("5_u0c7o")]
+position = Vector2(-633, 615)
+
+[node name="FlagReturn" parent="." unique_id=1886748476 groups=["player_team"] instance=ExtResource("6_hca2g")]
+position = Vector2(473, 648)
 
 [editable path="Enemy"]

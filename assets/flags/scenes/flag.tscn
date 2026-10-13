@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://xqmobj0njihn"]
+
+[ext_resource type="Texture2D" uid="uid://yeq4nyongi1n" path="res://assets/flags/sprites/flag.png" id="1_18p25"]
+[ext_resource type="Script" uid="uid://faeln5o6mxmc" path="res://assets/flags/src/Flag.cs" id="1_a3w08"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h7c14"]
+size = Vector2(37, 7)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_a3w08"]
+radius = 2.0935726
+height = 86.574165
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_a3w08"]
+radius = 50.0
+
+[node name="Flag" type="RigidBody2D" unique_id=362796721]
+collision_layer = 8
+gravity_scale = 0.0
+lock_rotation = true
+linear_damp = 3.0
+script = ExtResource("1_a3w08")
+
+[node name="CollisionBase" type="CollisionShape2D" parent="." unique_id=2011718639]
+position = Vector2(8.5, 39)
+shape = SubResource("RectangleShape2D_h7c14")
+
+[node name="CollisionPole" type="CollisionShape2D" parent="." unique_id=1048353163]
+position = Vector2(30, 2)
+rotation = 0.10471975
+shape = SubResource("CapsuleShape2D_a3w08")
+
+[node name="InteractArea" type="Area2D" parent="." unique_id=1500888540]
+collision_layer = 8
+collision_mask = 15
+
+[node name="AreaInteractable" type="CollisionShape2D" parent="InteractArea" unique_id=1836301234]
+shape = SubResource("CircleShape2D_a3w08")
+
+[node name="Display" type="Sprite2D" parent="InteractArea" unique_id=1591142829]
+scale = Vector2(0.175, 0.175)
+texture = ExtResource("1_18p25")
+
+[connection signal="body_entered" from="InteractArea" to="." method="OnBodyEnter"]
+[connection signal="body_exited" from="InteractArea" to="." method="OnBodyExit"]
