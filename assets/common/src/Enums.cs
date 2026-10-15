@@ -6,4 +6,6 @@ public enum Team
     NONE,
     PLAYER,
     ENEMY,
+
+    MAX
 }

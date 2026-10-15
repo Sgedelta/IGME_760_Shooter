@@ -12,8 +12,10 @@ vertices = PackedVector2Array(2866, -206, 3235.3438, -931.34375, 3235.3438, 419.
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(1, 0, 4), PackedInt32Array(5, 0, 3, 6), PackedInt32Array(6, 3, 7), PackedInt32Array(8, 6, 7, 9, 10), PackedInt32Array(4, 11, 12, 1), PackedInt32Array(13, 14, 8, 10, 15), PackedInt32Array(13, 15, 16, 17), PackedInt32Array(17, 16, 1, 12)])
 agent_radius = 50.0
 
-[node name="Level" type="Node2D" unique_id=26221713]
+[node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("Flags", "FlagReturns")]
 script = ExtResource("1_p4p1v")
+Flags = [NodePath("Flag")]
+FlagReturns = [NodePath("FlagReturn")]
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=112164395]
 navigation_polygon = SubResource("NavigationPolygon_2pp6q")
@@ -25,7 +27,6 @@ tile_set = ExtResource("1_kci6a")
 [node name="Character" parent="." unique_id=374600470 instance=ExtResource("2_vonw3")]
 position = Vector2(-532, 345)
 Speed = 500.0
-CarryOffsetAndRot = Vector3(15, 50, 0)
 
 [node name="Camera2D" type="Camera2D" parent="Character" unique_id=131757984]
 zoom = Vector2(0.385, 0.385)

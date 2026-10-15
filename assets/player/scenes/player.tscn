@@ -11,8 +11,7 @@ radius = 65.00769
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_onrkg")
-FlagThrowStr = 300.0
-CarryOffsetAndRot = Vector3(25, 0, 90)
+CarryOffsetAndRot = Vector3(0, 75, 0)
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
 texture = ExtResource("1_4flbx")
