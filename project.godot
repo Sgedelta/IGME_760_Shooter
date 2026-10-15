@@ -24,6 +24,10 @@ window/stretch/aspect="expand"
 
 project/assembly_name="760_Test_Shooter"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/goap/plugin.cfg")
+
 [global_group]
 
 player_team=""

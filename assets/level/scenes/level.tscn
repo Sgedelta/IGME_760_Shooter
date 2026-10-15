@@ -25,7 +25,6 @@ tile_set = ExtResource("1_kci6a")
 [node name="Character" parent="." unique_id=374600470 instance=ExtResource("2_vonw3")]
 position = Vector2(-532, 345)
 Speed = 500.0
-CarryOffsetAndRot = Vector3(15, 50, 0)
 
 [node name="Camera2D" type="Camera2D" parent="Character" unique_id=131757984]
 zoom = Vector2(0.385, 0.385)
