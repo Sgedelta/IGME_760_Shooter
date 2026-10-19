@@ -36,7 +36,15 @@ public partial class Level : Node2D
 		{
 			fr.OnFlagScored += OnFlagScored;
 		}
-		
+
+		Player[] playersInScene = GetTree().GetNodesInGroup("player_team").Where((node) => (node is Player)).OfType<Player>().ToArray();
+        Enemy[] enemiesInScene = GetTree().GetNodesInGroup("enemy_team").Where((node) => (node is Enemy)).OfType<Enemy>().ToArray();
+
+        foreach (Player p in playersInScene)
+		{
+			p.OnKilled += () => { OnRespawnRequested(p); };
+		}
+
 
 		ResetGame();
 
@@ -161,6 +169,21 @@ public partial class Level : Node2D
             spawnChance -= effect;
 		}
 		return Mathf.Max(0, spawnChance);
+	}
+
+	public void OnRespawnRequested(Node2D caller)
+	{
+		// set caller invisible
+
+		// wait
+
+		// get spawn position
+
+		// set caller to spawn position
+
+		// make caller visible
+
+		// tell caller it's respawned
 	}
 
 
