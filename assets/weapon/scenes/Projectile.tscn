@@ -11,6 +11,7 @@ top_level = true
 collision_layer = 4
 collision_mask = 7
 script = ExtResource("1_e7peq")
+Speed = 2000.0
 
 [node name="Display" type="Sprite2D" parent="." unique_id=1209131332]
 modulate = Color(0.6745098, 0.3882353, 1, 1)
