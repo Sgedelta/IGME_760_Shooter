@@ -34,6 +34,7 @@ public partial class Level : Node2D
 		{
 			fr.OnFlagScored += OnFlagScored;
 		}
+		
 
 		ResetGame();
 
@@ -112,17 +113,15 @@ public partial class Level : Node2D
 		// set pos
         f.GlobalPosition = _flagInitialPositions[f];
 		ResetPhysicsInterpolation(); //no interpolation
-
     }
 
-
-	/// <summary>
-	/// returns a random respawn point
-	/// </summary>
-	/// <param name="t"></param>
-	/// <returns></returns>
-	/// <exception cref="ArgumentException"></exception>
-	public RespawnPoint GetRespawnPoint(Team t)
+    /// <summary>
+    /// returns a random respawn point
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public RespawnPoint GetRespawnPoint(Team t)
 	{
 		string teamString = t switch { Team.PLAYER => "player_team", Team.ENEMY => "enemy_team", _ => throw new ArgumentException("team is not valid") };
 		var validPoints = RespawnPoints.Where((rp) => rp.IsInGroup(teamString));
@@ -130,11 +129,11 @@ public partial class Level : Node2D
 		if(validPoints.Count() == 0)
 		{
 			throw new ArgumentException("no valid respawn points in group " + teamString);
-		}
+        }
 
-		var pArray = new Godot.Collections.Array(validPoints.ToArray());
+        var pArray = new Godot.Collections.Array(validPoints.ToArray());
 
-		return validPoints.ElementAt(_rng.RandiRange(0, validPoints.Count() - 1));
+        return validPoints.ElementAt(_rng.RandiRange(0, validPoints.Count() - 1));
 		//_rng.RandWeighted()
 	}
 
