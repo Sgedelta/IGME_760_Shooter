@@ -229,7 +229,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         float size = _visual.Texture.GetSize().X;
 
         c.CustomMinimumSize = new Vector2(size, c.CustomMinimumSize.Y);
-        //c.CustomMaximumSize = new Vector2(size, c.CustomMinimumSize.Y);
+        c.CustomMaximumSize = new Vector2(size, c.CustomMinimumSize.Y);
         c.Size = new Vector2(size, c.Size.Y);
     }
 

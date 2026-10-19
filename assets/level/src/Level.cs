@@ -17,6 +17,8 @@ public partial class Level : Node2D
 
     [Export] public Array<RespawnPoint> RespawnPoints = new Array<RespawnPoint>();
 
+	[Export] public Curve NegativeSpawnChanceByDistance = new Curve();
+
 	private RandomNumberGenerator _rng;
 
 	// Called when the node enters the scene tree for the first time.
@@ -131,10 +133,34 @@ public partial class Level : Node2D
 			throw new ArgumentException("no valid respawn points in group " + teamString);
         }
 
-        var pArray = new Godot.Collections.Array(validPoints.ToArray());
+        var pArray = new Godot.Collections.Array<RespawnPoint>(validPoints.ToArray());
 
-        return validPoints.ElementAt(_rng.RandiRange(0, validPoints.Count() - 1));
-		//_rng.RandWeighted()
+		// grab all other team
+        Node2D[] oppositeTeamPlayers = (GetTree().GetNodesInGroup(teamString)).Where((obj) => obj is Player or Enemy).OfType<Node2D>().ToArray();
+		float[] posWeights = new float[oppositeTeamPlayers.Length];
+
+		// get weights
+		for(int i = 0; i < pArray.Count; i++)
+		{
+			posWeights[i] = SpawnChanceFromPoints(pArray[i].GlobalPosition, oppositeTeamPlayers);
+		}
+
+		int index = (int)_rng.RandWeighted(posWeights);
+
+        return validPoints.ElementAt(index);
+		
+	}
+
+	public float SpawnChanceFromPoints(Vector2 loc, Node2D[] discouragePoints)
+	{
+		float spawnChance = 1;
+		foreach(Vector2 pos in discouragePoints.Select((p) => p.GlobalPosition))
+		{
+			float dist = pos.DistanceTo(loc);
+			float effect = NegativeSpawnChanceByDistance.Sample(dist);
+            spawnChance -= effect;
+		}
+		return Mathf.Max(0, spawnChance);
 	}
 
 
