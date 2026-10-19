@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bbqms3hyc78og" path="res://assets/enemy/scenes/enemy.tscn" id="3_oi3di"]
 [ext_resource type="PackedScene" uid="uid://xqmobj0njihn" path="res://assets/flags/scenes/flag.tscn" id="5_u0c7o"]
 [ext_resource type="PackedScene" uid="uid://1d0rhhgowvqy" path="res://assets/flags/scenes/flag_return.tscn" id="6_hca2g"]
+[ext_resource type="PackedScene" uid="uid://dpm7ruf6r400b" path="res://assets/level/respawn_point/scenes/respawn_point.tscn" id="7_hca2g"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_2pp6q"]
 agent_radius = 50.0
@@ -22,8 +23,9 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[node name="Level" type="Node2D" unique_id=26221713]
+[node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("RespawnPoints")]
 script = ExtResource("1_p4p1v")
+RespawnPoints = [NodePath("CanvasLayer/Respawns/PlayerRespawn"), NodePath("CanvasLayer/Respawns/PlayerRespawn2"), NodePath("CanvasLayer/Respawns/PlayerRespawn3"), NodePath("CanvasLayer/Respawns/EnemyRespawn"), NodePath("CanvasLayer/Respawns/EnemyRespawn2"), NodePath("CanvasLayer/Respawns/EnemyRespawn3")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=446939736]
 layer = -1
@@ -46,7 +48,7 @@ tile_map_data = PackedByteArray("AAD+/wkAAAAKAAEAAQD//wkAAAAKAAEAAQADAAMAAAAKAAE
 tile_set = ExtResource("1_kci6a")
 
 [node name="Character" parent="CanvasLayer" unique_id=374600470 instance=ExtResource("2_vonw3")]
-position = Vector2(-1880, 2143)
+position = Vector2(-1965, 1955)
 collision_layer = 18
 Speed = 500.0
 
@@ -78,5 +80,25 @@ position = Vector2(-633, 615)
 
 [node name="FlagReturn" parent="CanvasLayer" unique_id=1886748476 groups=["player_team"] instance=ExtResource("6_hca2g")]
 position = Vector2(473, 648)
+
+[node name="Respawns" type="Node" parent="CanvasLayer" unique_id=1157707431]
+
+[node name="PlayerRespawn" parent="CanvasLayer/Respawns" unique_id=783362345 groups=["player_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(-2907, 2985)
+
+[node name="PlayerRespawn2" parent="CanvasLayer/Respawns" unique_id=1546054701 groups=["player_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(-2980, 730)
+
+[node name="PlayerRespawn3" parent="CanvasLayer/Respawns" unique_id=1390564164 groups=["player_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(-663, 2912)
+
+[node name="EnemyRespawn" parent="CanvasLayer/Respawns" unique_id=108630715 groups=["enemy_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(1330, 1286)
+
+[node name="EnemyRespawn2" parent="CanvasLayer/Respawns" unique_id=1451011676 groups=["enemy_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(9, -1986)
+
+[node name="EnemyRespawn3" parent="CanvasLayer/Respawns" unique_id=1460529229 groups=["enemy_team"] instance=ExtResource("7_hca2g")]
+position = Vector2(995, -1399)
 
 [editable path="CanvasLayer/Enemy"]
