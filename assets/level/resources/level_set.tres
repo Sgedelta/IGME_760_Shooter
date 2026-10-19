@@ -2,11 +2,17 @@
 
 [ext_resource type="Texture2D" uid="uid://dylx38ptsuviw" path="res://assets/level/sprites/GodotGreyTileset.png" id="1_sdwhe"]
 
+[sub_resource type="TileMapPattern" id="TileMapPattern_sdwhe"]
+tile_data = PackedInt32Array(0, 655360, 5, 65536, 655360, 5, 131072, 655360, 5, 196608, 655360, 5, 262144, 655360, 5, 327680, 655360, 5, 393216, 655360, 5, 458752, 655360, 5, 524288, 655360, 5, 589824, 655360, 5, 655360, 655360, 5, 720896, 655360, 5, 786432, 655360, 5, 851968, 655360, 5, 262145, 655360, 5, 327681, 655360, 5, 851969, 655360, 5, 262146, 655360, 5, 327682, 655360, 5, 851970, 655360, 5, 3, 655360, 5, 65539, 655360, 5, 851971, 655360, 5, 4, 655360, 5, 65540, 655360, 5, 851972, 655360, 5, 5, 655360, 5, 65541, 655360, 5, 851973, 655360, 5, 262150, 655360, 5, 327686, 655360, 5, 851974, 655360, 5, 327687, 655360, 5, 851975, 655360, 5, 65544, 655360, 5, 327688, 655360, 5, 393224, 655360, 5, 589832, 655360, 5, 786440, 655360, 5, 851976, 655360, 5, 9, 655360, 5, 65545, 655360, 5, 589833, 655360, 5, 786441, 655360, 5, 851977, 655360, 5, 589834, 655360, 5, 851978, 655360, 5, 393227, 655360, 5, 458763, 655360, 5, 524299, 655360, 5, 589835, 655360, 5, 851979, 655360, 5, 65548, 655360, 5, 589836, 655360, 65537, 851980, 655360, 5, 589837, 655360, 65537, 786445, 655360, 5, 851981, 655360, 5, 786446, 655360, 5, 851982, 655360, 5, 65551, 655360, 5, 786447, 655360, 5, 851983, 655360, 5, 458768, 655360, 5, 524304, 655360, 5, 589840, 655360, 5, 786448, 655360, 5, 851984, 655360, 5, 196625, 655360, 65537, 262161, 655360, 65537, 851985, 655360, 5, 196626, 655360, 65537, 851986, 655360, 5, 851987, 655360, 5, 393236, 655360, 65537, 458772, 655360, 65537, 524308, 655360, 65537, 589844, 655360, 5, 851988, 655360, 5, 65557, 655360, 5, 131093, 655360, 65537, 196629, 655360, 65537, 393237, 655360, 65537, 786453, 655360, 5, 851989, 655360, 5, 22, 655360, 5, 65558, 655360, 5, 393238, 655360, 65537, 786454, 655360, 5, 851990, 655360, 5, 393239, 655360, 5, 655383, 655360, 5, 720919, 655360, 5, 786455, 655360, 5, 851991, 655360, 5, 393240, 655360, 5, 655384, 655360, 5, 851992, 655360, 5, 131097, 655360, 5, 196633, 655360, 5, 262169, 655360, 5, 851993, 655360, 5, 131098, 655360, 5, 196634, 655360, 5, 262170, 655360, 5, 851994, 655360, 5, 27, 655360, 5, 65563, 655360, 5, 131099, 655360, 5, 196635, 655360, 5, 262171, 655360, 5, 327707, 655360, 5, 393243, 655360, 5, 458779, 655360, 5, 524315, 655360, 5, 589851, 655360, 5, 655387, 655360, 5, 720923, 655360, 5, 786459, 655360, 5, 851995, 655360, 5)
+
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_sdwhe"]
 vertices = PackedVector2Array(128, 128, -128, 128, -128, -128, 128, -128)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)])
 agent_radius = 0.0
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_sdwhe"]
+polygon = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwyoh"]
 resource_name = "NormalFloorAndWall"
@@ -166,8 +172,12 @@ texture_region_size = Vector2i(256, 256)
 9:1/0/terrains_peering_bit/left_side = 1
 9:1/0/terrains_peering_bit/top_side = 1
 9:1/0/terrains_peering_bit/top_right_corner = 1
+10:1/next_alternative_id = 4
 10:1/0 = 0
 10:1/0/terrain_set = 0
+10:1/1 = 1
+10:1/1/modulate = Color(0.7598602, 1.5565991, 1.5565991, 1)
+10:1/1/physics_layer_1/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 11:1/0 = 0
 11:1/0/terrain_set = 0
 11:1/0/terrain = 1
@@ -564,8 +574,10 @@ texture_region_size = Vector2i(256, 256)
 9:5/0/terrains_peering_bit/top_side = 0
 9:5/0/terrains_peering_bit/top_right_corner = 0
 9:5/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_sdwhe")
+10:5/next_alternative_id = 2
 10:5/0 = 0
 10:5/0/terrain_set = 0
+10:5/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_sdwhe")
 10:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 10:5/0/terrains_peering_bit/right_side = 0
 10:5/0/terrains_peering_bit/bottom_right_corner = 0
@@ -822,6 +834,8 @@ texture_region_size = Vector2i(256, 256)
 tile_size = Vector2i(256, 256)
 occlusion_layer_0/light_mask = 1
 physics_layer_0/collision_layer = 1
+physics_layer_1/collision_layer = 16
+physics_layer_1/collision_mask = 17
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Floor"
 terrain_set_0/terrain_0/color = Color(0, 0.74, 0.012333321, 1)
@@ -829,3 +843,4 @@ terrain_set_0/terrain_1/name = "Wall"
 terrain_set_0/terrain_1/color = Color(0.4939997, 0, 0.76, 1)
 navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_mwyoh")
+pattern_0 = SubResource("TileMapPattern_sdwhe")

@@ -79,12 +79,14 @@ interact_generic={
 
 [layer_names]
 
+2d_render/layer_1="shadow_casters"
 2d_physics/layer_1="collision_objects"
 2d_navigation/layer_1="Ground"
 2d_physics/layer_2="actors"
 2d_navigation/layer_2="Flying"
 2d_physics/layer_3="projectiles"
 2d_physics/layer_4="pickups"
+2d_physics/layer_5="unwalkable_terrain"
 
 [physics]
 
