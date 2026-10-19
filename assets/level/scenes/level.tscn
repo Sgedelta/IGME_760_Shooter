@@ -23,8 +23,10 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("RespawnPoints")]
+[node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("Flags", "FlagReturns", "RespawnPoints")]
 script = ExtResource("1_p4p1v")
+Flags = [NodePath("CanvasLayer/Flag")]
+FlagReturns = [NodePath("CanvasLayer/FlagReturn")]
 RespawnPoints = [NodePath("CanvasLayer/Respawns/PlayerRespawn"), NodePath("CanvasLayer/Respawns/PlayerRespawn2"), NodePath("CanvasLayer/Respawns/PlayerRespawn3"), NodePath("CanvasLayer/Respawns/EnemyRespawn"), NodePath("CanvasLayer/Respawns/EnemyRespawn2"), NodePath("CanvasLayer/Respawns/EnemyRespawn3")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=446939736]
