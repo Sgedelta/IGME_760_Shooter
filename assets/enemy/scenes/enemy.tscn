@@ -10,6 +10,7 @@ radius = 80.00625
 [node name="Enemy" type="CharacterBody2D" unique_id=374600470 groups=["enemy_team"]]
 modulate = Color(1, 0.34901962, 0.24705882, 1)
 collision_layer = 2
+collision_mask = 17
 motion_mode = 1
 script = ExtResource("1_4gyqm")
 

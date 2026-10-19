@@ -9,6 +9,7 @@ radius = 65.00769
 
 [node name="Character" type="CharacterBody2D" unique_id=374600470 groups=["player_team"]]
 collision_layer = 2
+collision_mask = 17
 motion_mode = 1
 script = ExtResource("1_onrkg")
 CarryOffsetAndRot = Vector3(0, 75, 0)

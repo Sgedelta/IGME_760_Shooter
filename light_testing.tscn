@@ -60,7 +60,6 @@ texture_scale = 30.0
 [node name="LightOccluder2D" type="LightOccluder2D" parent="CanvasLayer2" unique_id=100012252]
 position = Vector2(183, 166)
 occluder = SubResource("OccluderPolygon2D_ctgup")
-occluder_light_mask = 3
 
 [node name="LightOccluder2D2" type="LightOccluder2D" parent="CanvasLayer2" unique_id=1414464402]
 position = Vector2(868, 369)
