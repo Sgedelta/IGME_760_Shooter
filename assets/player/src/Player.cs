@@ -1,10 +1,12 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Diagnostics;
 using SCG = System.Collections.Generic;
 
 public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 {
+    Level level;
     [Signal] public delegate void OnPickupEventHandler();
 
     [Export] public float Speed { get; private set; } = 25.0f;
@@ -15,6 +17,9 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public IPickupable Carrying { get; private set; }
 
+    public bool PauseOnDeath = false;
+    public float TimePaused = 10;
+    private bool Respawning = false;
 
     [Export] public float FlagThrowStr = 15;
     public Vector2 DropVel { get { return Velocity + GetLocalMousePosition().Normalized() * FlagThrowStr; } }
@@ -60,14 +65,35 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
         EmitSignal(SignalName.OnDamageTaken, damage);
 
-        if (Health < 0)
+        if (Health <= 0)
         {
             EmitSignal(SignalName.OnKilled);
         }
     }
 
+    public void OnPlayerKilled()
+    {
+        GD.Print("Player Died");
+        this.Position = level.GetRespawnPoint(Team.PLAYER).Position;
+        if (PauseOnDeath)
+        {
+            Respawning = true;
+            TimePaused = 10;
+            this.Modulate = new Color(1, 1, 1, 0.7f);
+        }
+        
+        _bulletsLeft.Value = _weapon.MagazineSize;
+        Health = 3;
+
+        foreach (Flag f in _touchingFlags)
+        {
+            TryDrop(f);
+        }
+    }
+
     public override void _Ready()
     {
+        level = GetTree().Root.GetNode<Level>("Level");
         _weapon = GetNode<Weapon>("Weapon");
         _weapon.WeaponTeam = Team.PLAYER;
 
@@ -76,6 +102,8 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         _reloadProgress = GetNode<ProgressBar>("%ReloadBar");
 
         SetupProgressBars();
+
+        OnKilled += OnPlayerKilled;
 
         _weapon.OnFire += (v) => { _bulletsLeft.Value = v; };
         _weapon.OnReloadStarted += (t) =>
@@ -96,42 +124,61 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         _touchingFlags = new SCG.HashSet<Flag>();
     }
 
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        if (Respawning)
+        {
+            TimePaused -= (float)delta;
+            if (TimePaused <= 0)
+            {
+                Respawning = false;
+                this.Modulate = new Color(1, 1, 1, 1f);
+            }
+        }
+    }
+
     public override void _PhysicsProcess(double delta)
     {
-        Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        if (!Respawning)
+        {
+            Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
-        MoveInDir(direction);
+            MoveInDir(direction);
 
-        _weapon.AimDir = GetLocalMousePosition().Normalized();
-
+            _weapon.AimDir = GetLocalMousePosition().Normalized();
+        }
     }
 
     public override void _Input(InputEvent @event)
     {
-        if(@event.IsActionPressed("fire"))
+        if (!Respawning)
         {
-            _weapon.TryFire();
-        }
-        if(@event.IsActionPressed("reload"))
-        {
-            _weapon.Reload();
-        }
-        if(@event.IsActionPressed("interact_generic"))
-        {
-            foreach(Flag f in _touchingFlags)
+            if (@event.IsActionPressed("fire"))
             {
-                // for every flag we are touching, try picking it up. If that fails, try dropping it
-                if (TryPickup(f))
+                _weapon.TryFire();
+            }
+            if (@event.IsActionPressed("reload"))
+            {
+                _weapon.Reload();
+            }
+            if (@event.IsActionPressed("interact_generic"))
+            {
+                foreach (Flag f in _touchingFlags)
                 {
-                    // stop checking if we pick a flag up
-                    break;
-                }
-                else if (TryDrop(f))
-                {
-                    // stop checking if we drop a flag
-                    break;
-                }
+                    // for every flag we are touching, try picking it up. If that fails, try dropping it
+                    if (TryPickup(f))
+                    {
+                        // stop checking if we pick a flag up
+                        break;
+                    }
+                    else if (TryDrop(f))
+                    {
+                        // stop checking if we drop a flag
+                        break;
+                    }
 
+                }
             }
         }
     }
@@ -182,7 +229,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         float size = _visual.Texture.GetSize().X;
 
         c.CustomMinimumSize = new Vector2(size, c.CustomMinimumSize.Y);
-        c.CustomMaximumSize = new Vector2(size, c.CustomMinimumSize.Y);
+        //c.CustomMaximumSize = new Vector2(size, c.CustomMinimumSize.Y);
         c.Size = new Vector2(size, c.Size.Y);
     }
 

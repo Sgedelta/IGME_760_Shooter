@@ -5,6 +5,8 @@ public partial class Flag : RigidBody2D, IPickupable
 {
     public ICarrier Carrier { get; private set; }
 
+    public Team team;
+
     [Export] private float _DragSpeed;
 
     public bool BeingCarried

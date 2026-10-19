@@ -18,8 +18,8 @@ texture = ExtResource("1_4flbx")
 
 [node name="BulletsBar" type="TextureProgressBar" parent="Visual" unique_id=1195326967]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
 clip_contents = true
+custom_minimum_size = Vector2(0, 20)
 offset_right = 128.0
 offset_bottom = 128.0
 max_value = 20.0
