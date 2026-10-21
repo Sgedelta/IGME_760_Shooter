@@ -1,8 +1,18 @@
 [gd_scene format=3 uid="uid://itrfddb0i63k"]
 
-[ext_resource type="Texture2D" uid="uid://b8e40rnh1xbxh" path="res://icon.svg" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://bn737ikhuloix" path="res://assets/player/src/Player.cs" id="1_onrkg"]
+[ext_resource type="Texture2D" uid="uid://cacodj1w5do5o" path="res://assets/common/sprites/shaded_circle.png" id="2_i0xkv"]
+[ext_resource type="Texture2D" uid="uid://du6dd520wctc2" path="res://assets/common/sprites/bullet_empty.png" id="3_5tn3q"]
+[ext_resource type="Texture2D" uid="uid://c16sxvilncdqc" path="res://assets/common/sprites/bullet_full.png" id="3_i0xkv"]
 [ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_i3pqv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6xfo"]
+atlas = ExtResource("3_5tn3q")
+region = Rect2(0, 0, 2400, 0)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52a3d"]
+atlas = ExtResource("3_i0xkv")
+region = Rect2(0, 0, 2400, 0)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
 radius = 65.00769
@@ -15,22 +25,28 @@ script = ExtResource("1_onrkg")
 CarryOffsetAndRot = Vector3(0, 75, 0)
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
-texture = ExtResource("1_4flbx")
+self_modulate = Color(0.47058824, 1, 0.8156863, 1)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("2_i0xkv")
 
 [node name="BulletsBar" type="TextureProgressBar" parent="Visual" unique_id=1195326967]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
-custom_maximum_size = Vector2(-1, 20)
+z_index = 3
+texture_repeat = 2
+custom_minimum_size = Vector2(0, 100)
 clip_contents = true
-offset_right = 128.0
-offset_bottom = 128.0
+offset_right = 200.0
+offset_bottom = 100.0
 max_value = 20.0
 value = 3.0
-texture_progress = ExtResource("1_4flbx")
+rounded = true
+nine_patch_stretch = true
+texture_under = SubResource("AtlasTexture_p6xfo")
+texture_progress = SubResource("AtlasTexture_52a3d")
 
 [node name="ReloadBar" type="ProgressBar" parent="Visual" unique_id=1842169862]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
+z_index = 3
 offset_right = 4.0
 offset_bottom = 27.0
 max_value = 1.0

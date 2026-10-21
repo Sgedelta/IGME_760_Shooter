@@ -62,7 +62,9 @@ public partial class Weapon : Node2D
 		// Position firing point and display node using local position
 		_firingPoint.Position = AimDir * FireOrbitRadius;
 		_displayNode.Position = AimDir * DisplayOrbitRadius;
-	}
+		_displayNode.Rotation = AimDir.Angle();
+
+    }
 
 	public void TryFire()
 	{
