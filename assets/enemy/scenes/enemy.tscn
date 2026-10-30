@@ -12,6 +12,9 @@ collision_layer = 2
 collision_mask = 17
 motion_mode = 1
 script = ExtResource("1_4gyqm")
+Speed = 200.0
+AimVariance = 0.17453292519943295
+RotationSpeedPerSec = 1.5707963267948966
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
 self_modulate = Color(1, 0.19607843, 0, 1)

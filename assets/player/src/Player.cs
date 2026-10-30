@@ -12,6 +12,11 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
     [Export] public float Speed { get; private set; } = 25.0f;
 
     [Export] public int Health { get; private set; } = 3;
+    private int _MaxHealth;
+
+    [Export] public float RegenSpeed { get; private set; } = 5;
+
+    [Export] public float TimeUntilRegen { get; private set; } = 10;
 
     public bool CanPickup {  get; private set; }
 
@@ -58,10 +63,16 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
     private SCG.HashSet<Flag> _touchingFlags;
 
+    private Timer _damageTimer;
+    private Timer _regenTimer;
+
     public void TakeDamage(int damage)
     {
         GD.Print($"{Name}: Ow! took {damage} damage");
         Health -= damage;
+
+        _regenTimer.Stop();
+        _damageTimer.Start(TimeUntilRegen);
 
         EmitSignal(SignalName.OnDamageTaken, damage);
 
@@ -122,6 +133,24 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         };
 
         _touchingFlags = new SCG.HashSet<Flag>();
+
+        _MaxHealth = Health;
+
+        _damageTimer = new Timer();
+        _damageTimer.OneShot = true;
+        _regenTimer = new Timer();
+        _regenTimer.OneShot = false; // think this defaults to this but making sure
+        AddChild(_damageTimer);
+        AddChild(_regenTimer);
+        _damageTimer.Timeout += () =>
+        {
+            _regenTimer.Start(TimeUntilRegen);
+        };
+        _regenTimer.Timeout += () =>
+        {
+
+            Health = Mathf.Clamp(Health + 1, 0, _MaxHealth);
+        };
     }
 
     public override void _Process(double delta)
@@ -158,7 +187,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
             {
                 _weapon.TryFire();
             }
-            if (@event.IsActionPressed("reload"))
+            if (@event.IsActionPressed("reload") && !_weapon.Reloading)
             {
                 _weapon.Reload();
             }

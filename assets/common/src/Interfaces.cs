@@ -8,6 +8,10 @@ public interface IDamagable
 
 	public void TakeDamage(int damage);
 
+	public float RegenSpeed { get;  }
+
+	public float TimeUntilRegen { get; }
+
 }
 
 public interface IMover

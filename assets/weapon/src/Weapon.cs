@@ -22,7 +22,9 @@ public partial class Weapon : Node2D
 	private bool _CanFire = true;
 	private bool _Reloading = false;
 
-	private Node2D _firingPoint;
+    public bool Reloading { get { return _Reloading; } }
+
+    private Node2D _firingPoint;
 	private Node2D _displayNode;
 	private Timer _fireTimer;
 	private Timer _reloadTimer;
