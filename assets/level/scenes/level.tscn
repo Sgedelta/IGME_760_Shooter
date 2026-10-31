@@ -27,6 +27,10 @@ fill_to = Vector2(1, 0.5)
 
 [node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("Flags", "FlagReturns", "RespawnPoints")]
 script = ExtResource("1_p4p1v")
+TeamColors = Dictionary[int, Color]({
+1: Color(0.3882353, 0.79607844, 1, 1),
+2: Color(1, 0.12941177, 0.047058824, 1)
+})
 Flags = [NodePath("CanvasLayer/Flag")]
 FlagReturns = [NodePath("CanvasLayer/FlagReturn")]
 RespawnPoints = [NodePath("CanvasLayer/Respawns/PlayerRespawn"), NodePath("CanvasLayer/Respawns/PlayerRespawn2"), NodePath("CanvasLayer/Respawns/PlayerRespawn3"), NodePath("CanvasLayer/Respawns/EnemyRespawn"), NodePath("CanvasLayer/Respawns/EnemyRespawn2"), NodePath("CanvasLayer/Respawns/EnemyRespawn3")]
@@ -53,8 +57,8 @@ tile_set = ExtResource("1_kci6a")
 
 [node name="Character" parent="CanvasLayer" unique_id=374600470 instance=ExtResource("2_vonw3")]
 position = Vector2(-1965, 1955)
-collision_layer = 18
 Speed = 500.0
+FlagThrowStr = 100.0
 
 [node name="Camera2D" type="Camera2D" parent="CanvasLayer/Character" unique_id=131757984]
 zoom = Vector2(0.385, 0.385)

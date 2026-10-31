@@ -28,7 +28,6 @@ public partial class Projectile : Area2D
 
 	public void BodyEnteredArea(Node2D other)
 	{
-		GD.Print("Other Body Entered " + other.Name);
 		if((other.IsInGroup("enemy_team") && IsInGroup("player_team")) || 
 			(other.IsInGroup("player_team") & IsInGroup("enemy_team")))
 		{

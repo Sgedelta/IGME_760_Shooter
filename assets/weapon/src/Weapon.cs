@@ -48,7 +48,6 @@ public partial class Weapon : Node2D
 			_CanFire = true; 
 			_Reloading = false; 
 			EmitSignal(SignalName.OnReloadFinished);
-			GD.Print("Reload Done");
 		};
 
         LoadedBullets = MagazineSize;
@@ -77,7 +76,6 @@ public partial class Weapon : Node2D
 
 		_CanFire = false;
 		LoadedBullets -= 1;
-		GD.Print($"Fired! Bullets Left: {LoadedBullets}");
 		_fireTimer.Start();
 
 		Projectile firedProjectile = ProjectileScene.Instantiate<Projectile>();
@@ -106,6 +104,5 @@ public partial class Weapon : Node2D
 		_Reloading = true;
 		EmitSignal(SignalName.OnReloadStarted, _reloadTimer.WaitTime);
 		_reloadTimer.Start();
-		GD.Print("Reloading..");
 	}
 }

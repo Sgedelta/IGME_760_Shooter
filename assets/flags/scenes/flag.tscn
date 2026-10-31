@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://yeq4nyongi1n" path="res://assets/flags/sprites/flag.png" id="1_18p25"]
 [ext_resource type="Script" uid="uid://faeln5o6mxmc" path="res://assets/flags/src/Flag.cs" id="1_a3w08"]
+[ext_resource type="Texture2D" uid="uid://blotix5jeepl7" path="res://assets/flags/resources/return_progress_texture.tres" id="3_t7hmy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h7c14"]
 size = Vector2(37, 7)
@@ -13,8 +14,24 @@ height = 86.574165
 [sub_resource type="CircleShape2D" id="CircleShape2D_a3w08"]
 radius = 50.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_t7hmy"]
+radius = 250.0
+
+[sub_resource type="Gradient" id="Gradient_t7hmy"]
+offsets = PackedFloat32Array(0.6416819, 0.8062157, 0.9140768, 0.9469836, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.33333334, 1, 1, 1, 0.84313726, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t7hmy"]
+gradient = SubResource("Gradient_t7hmy")
+width = 530
+height = 530
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
 [node name="Flag" type="RigidBody2D" unique_id=362796721]
 collision_layer = 8
+collision_mask = 17
 gravity_scale = 0.0
 lock_rotation = true
 linear_damp = 3.0
@@ -29,6 +46,20 @@ position = Vector2(30, 2)
 rotation = 0.10471975
 shape = SubResource("CapsuleShape2D_a3w08")
 
+[node name="ReturnProgress" type="TextureProgressBar" parent="." unique_id=1374396866]
+offset_left = -65.0
+offset_top = -65.0
+offset_right = 65.0
+offset_bottom = 65.0
+max_value = 360.0
+step = 0.2
+value = 270.0
+fill_mode = 4
+texture_under = ExtResource("3_t7hmy")
+texture_progress = ExtResource("3_t7hmy")
+tint_under = Color(0.8175213, 0.8175213, 0.81752115, 0.41568628)
+tint_progress = Color(1.1195241, 1.1195241, 1.1195241, 1)
+
 [node name="InteractArea" type="Area2D" parent="." unique_id=1500888540]
 collision_layer = 8
 collision_mask = 15
@@ -40,5 +71,20 @@ shape = SubResource("CircleShape2D_a3w08")
 scale = Vector2(0.175, 0.175)
 texture = ExtResource("1_18p25")
 
+[node name="ReturnArea" type="Area2D" parent="." unique_id=768065034]
+collision_layer = 8
+collision_mask = 2
+
+[node name="ReturnShape" type="CollisionShape2D" parent="ReturnArea" unique_id=1170154548]
+shape = SubResource("CircleShape2D_t7hmy")
+
+[node name="ReturnAreaDisplay" type="Sprite2D" parent="ReturnArea" unique_id=410159454]
+unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.5019608)
+show_behind_parent = true
+texture = SubResource("GradientTexture2D_t7hmy")
+
 [connection signal="body_entered" from="InteractArea" to="." method="OnBodyEnter"]
 [connection signal="body_exited" from="InteractArea" to="." method="OnBodyExit"]
+[connection signal="body_entered" from="ReturnArea" to="." method="OnReturnAreaEnter"]
+[connection signal="body_exited" from="ReturnArea" to="." method="OnReturnAreaExit"]

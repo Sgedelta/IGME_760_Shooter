@@ -9,6 +9,8 @@ public partial class Level : Node2D
 
 	Dictionary<Team, int> Scores;
 
+	[Export] Dictionary<Team, Color> TeamColors = new Dictionary<Team, Color>();
+
 	[Export] public int GoalScore = 3;
 
 	[Export] public Array<Flag> Flags = new();
@@ -30,7 +32,10 @@ public partial class Level : Node2D
 		foreach(Flag f in Flags)
 		{
 			_flagInitialPositions.Add(f, f.GlobalPosition);
-		}
+			f.OnFlagReturn += () => ResetFlag(f);
+			f.Modulate = TeamColors[f.team];
+
+        }
 
 		foreach(FlagReturn fr in FlagReturns)
 		{
@@ -122,6 +127,7 @@ public partial class Level : Node2D
         f.LinearVelocity = Vector2.Zero;
 		// set pos
         f.GlobalPosition = _flagInitialPositions[f];
+		f.InternalReset();
 		ResetPhysicsInterpolation(); //no interpolation
     }
 
