@@ -19,4 +19,4 @@ func perform(_delta) -> bool:
 
 # the cost of taking this step
 func get_cost(_blackboard) -> int:
-	return 2;
+	return 3;

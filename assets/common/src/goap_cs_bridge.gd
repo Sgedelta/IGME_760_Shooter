@@ -36,3 +36,7 @@ func get_dist_to_flag() -> float:
 func maintain_distance_from_player():
 	# TODO: find player location and move to a point near them
 	pass
+
+func guide_to_home():
+	
+	pass

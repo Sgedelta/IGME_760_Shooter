@@ -91,6 +91,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         _weapon.WeaponTeam = Team.ENEMY;
 
         _MaxHealth = Health;
+        _touchingFlags = new();
 
         _rng = new RandomNumberGenerator();
 

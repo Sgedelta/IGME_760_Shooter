@@ -37,6 +37,7 @@ public partial class Level : Node2D
 			_flagInitialPositions.Add(f, f.GlobalPosition);
 			f.OnFlagReturn += () => ResetFlag(f);
 			f.Modulate = TeamColors[f.team];
+			f.OnFlagPickedUp += UpdateEnemyInfo;
 
         }
 
@@ -145,6 +146,7 @@ public partial class Level : Node2D
         f.GlobalPosition = _flagInitialPositions[f];
 		f.InternalReset();
 		ResetPhysicsInterpolation(); //no interpolation
+		UpdateEnemyInfo(); // update the enemy
     }
 
     /// <summary>
@@ -219,13 +221,13 @@ public partial class Level : Node2D
 			var ws = (Node)agent.Call("get_world_state");
 
 			// are any of the flags we want available
-			ws.Call("set_state", StateKeys.FLAG_AVAIL, Flags.Where(f => f.team == Team.PLAYER).Any(f => !f.BeingCarried));
+			ws.Call("set_state", StateKeys.FLAG_AVAIL, !Flags.Where(f => f.team == Team.PLAYER).All(f => f.BeingCarried));
 
             // are we carrying a flag?
-            ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
+            //ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
 
             // are all of our flags at home
-            //ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).All(f => f.S));
+            ws.Call("set_state", StateKeys.FLAG_AT_HOME, Flags.Where(f => f.team == Team.ENEMY).All(f => f.OnStand));
 
             // are any of our flags being carried
             ws.Call("set_state", StateKeys.PLAYER_HAS_FLAG, Flags.Where(f => f.team == Team.ENEMY).Any(f => f.BeingCarried));

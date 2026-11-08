@@ -4,11 +4,11 @@ extends GoapAction
 # Set effects and preconditions here
 func _ready() -> void:
 	effects = {
-		StateKeys.HAS_FLAG: true,
-		StateKeys.FLAG_AVAIL: false
+		StateKeys.HAS_FLAG: true
 	} 
 	preconditions = {
-		StateKeys.FLAG_AVAIL: true
+		StateKeys.FLAG_AVAIL: true, 
+		StateKeys.HAS_FLAG: false
 	}
 	pass
 

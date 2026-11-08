@@ -31,7 +31,7 @@ TeamColors = Dictionary[int, Color]({
 1: Color(0.3882353, 0.79607844, 1, 1),
 2: Color(1, 0.12941177, 0.047058824, 1)
 })
-Flags = [NodePath("CanvasLayer/Flag")]
+Flags = [NodePath("CanvasLayer/Flag"), NodePath("CanvasLayer/PlayerFlag")]
 FlagReturns = [NodePath("CanvasLayer/FlagReturn")]
 RespawnPoints = [NodePath("CanvasLayer/Respawns/PlayerRespawn"), NodePath("CanvasLayer/Respawns/PlayerRespawn2"), NodePath("CanvasLayer/Respawns/PlayerRespawn3"), NodePath("CanvasLayer/Respawns/EnemyRespawn"), NodePath("CanvasLayer/Respawns/EnemyRespawn2"), NodePath("CanvasLayer/Respawns/EnemyRespawn3")]
 
@@ -85,6 +85,9 @@ _initialTargetPos = Vector2(110, 70)
 
 [node name="Flag" parent="CanvasLayer" unique_id=1500888540 groups=["enemy_team"] instance=ExtResource("5_u0c7o")]
 position = Vector2(-633, 615)
+
+[node name="PlayerFlag" parent="CanvasLayer" unique_id=362796721 groups=["player_team"] instance=ExtResource("5_u0c7o")]
+position = Vector2(-813, -454)
 
 [node name="FlagReturn" parent="CanvasLayer" unique_id=1886748476 groups=["player_team"] instance=ExtResource("6_hca2g")]
 position = Vector2(473, 648)
