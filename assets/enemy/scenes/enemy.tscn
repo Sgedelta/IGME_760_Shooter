@@ -3,6 +3,15 @@
 [ext_resource type="Script" uid="uid://dy26tvmyhijwm" path="res://assets/enemy/src/Enemy.cs" id="1_4gyqm"]
 [ext_resource type="Texture2D" uid="uid://cacodj1w5do5o" path="res://assets/common/sprites/shaded_circle.png" id="2_oq0ac"]
 [ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_oq0ac"]
+[ext_resource type="Script" uid="uid://c48doc0kviaqu" path="res://addons/goap/goap_agent.gd" id="4_hw76b"]
+[ext_resource type="Script" uid="uid://clx80moch4b57" path="res://assets/common/src/goals/score_flag.gd" id="5_e24bd"]
+[ext_resource type="Script" uid="uid://c8w7nn33r57el" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
+[ext_resource type="Script" uid="uid://de0jcja8ycww6" path="res://assets/common/src/goals/stop_player.gd" id="6_e24bd"]
+[ext_resource type="Script" uid="uid://dysm3rn05yi37" path="res://assets/common/src/actions/kill_player.gd" id="7_ph424"]
+[ext_resource type="Script" uid="uid://cspd4oxdiofyy" path="res://assets/common/src/actions/return_our_flag.gd" id="8_ct1qm"]
+[ext_resource type="Script" uid="uid://ewsptkcw5wpq" path="res://assets/common/src/actions/score_held_flag.gd" id="9_6w2sh"]
+[ext_resource type="Script" uid="uid://bc08mpmr10kbt" path="res://assets/common/src/actions/find_player.gd" id="11_h8o35"]
+[ext_resource type="Script" uid="uid://bfk1cvyr4ppo2" path="res://assets/common/src/actions/pickup_flag.gd" id="11_lqefk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
 radius = 80.00625
@@ -27,3 +36,38 @@ shape = SubResource("CircleShape2D_27m30")
 [node name="NavAgent" type="NavigationAgent2D" parent="." unique_id=1656022149]
 
 [node name="Weapon" parent="." unique_id=625231334 instance=ExtResource("3_oq0ac")]
+
+[node name="C# Bridge" type="Node2D" parent="." unique_id=540486359]
+script = ExtResource("5_nmqyq")
+
+[node name="Goals" type="Node" parent="C# Bridge" unique_id=1329246907]
+
+[node name="Score" type="Node" parent="C# Bridge/Goals" unique_id=2081677527]
+script = ExtResource("5_e24bd")
+
+[node name="StopPlayer" type="Node" parent="C# Bridge/Goals" unique_id=974745692]
+script = ExtResource("6_e24bd")
+
+[node name="Actions" type="Node" parent="C# Bridge" unique_id=1543241269]
+
+[node name="KillPlayer" type="Node" parent="C# Bridge/Actions" unique_id=535906590]
+script = ExtResource("7_ph424")
+
+[node name="ReturnFlag" type="Node" parent="C# Bridge/Actions" unique_id=1798991933]
+script = ExtResource("8_ct1qm")
+
+[node name="ScoreHeldFlag" type="Node" parent="C# Bridge/Actions" unique_id=60650132]
+script = ExtResource("9_6w2sh")
+
+[node name="PickupFlag" type="Node" parent="C# Bridge/Actions" unique_id=462452357]
+script = ExtResource("11_lqefk")
+metadata/_custom_type_script = "uid://xxf8uqedkykm"
+
+[node name="FindPlayer" type="Node" parent="C# Bridge/Actions" unique_id=1672128807]
+script = ExtResource("11_h8o35")
+metadata/_custom_type_script = "uid://xxf8uqedkykm"
+
+[node name="GoapAgent" type="Node" parent="C# Bridge" unique_id=1533001410 node_paths=PackedStringArray("actions_node", "goals_node")]
+script = ExtResource("4_hw76b")
+actions_node = NodePath("../Actions")
+goals_node = NodePath("../Goals")

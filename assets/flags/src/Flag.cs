@@ -160,6 +160,10 @@ public partial class Flag : RigidBody2D, IPickupable
         {
             p.RegisterFlagTouched(this);
         }
+        else if (body is Enemy e)
+        {
+            e.RegisterFlagTouched(this);
+        }
     }
 
     public void OnBodyExit(Node2D body)
@@ -167,6 +171,10 @@ public partial class Flag : RigidBody2D, IPickupable
         if (body is Player p)
         {
             p.RegisterFlagLeft(this);
+        }
+        else if (body is Enemy e)
+        {
+            e.RegisterFlagLeft(this);
         }
     }
 

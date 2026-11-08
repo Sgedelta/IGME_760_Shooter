@@ -23,6 +23,9 @@ public partial class Level : Node2D
 
 	private RandomNumberGenerator _rng;
 
+	private Array<Enemy> _enemies;
+	private Array<Player> _players;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -47,11 +50,24 @@ public partial class Level : Node2D
 
         foreach (Player p in playersInScene)
 		{
-			p.OnKilled += () => { OnRespawnRequested(p); };
+			p.OnKilled += () => { 
+				OnRespawnRequested(p);
+				UpdateEnemyInfo();
+			};
 		}
 
+		foreach (Enemy e in enemiesInScene)
+		{
+			e.OnKilled += () =>
+			{
+				UpdateEnemyInfo();
+			};
+		}
 
-		ResetGame();
+		_enemies = new Array<Enemy>(enemiesInScene);
+        _players = new Array<Player>(playersInScene);
+
+        ResetGame();
 
 	}
 
@@ -192,6 +208,31 @@ public partial class Level : Node2D
 		// tell caller it's respawned
 	}
 
+
+	// catch all function for setting state vars of enemies
+	public void UpdateEnemyInfo()
+	{
+
+		foreach (Enemy e in _enemies)
+		{
+			var agent = (Node)e.GoapBridge.Get("agent");
+			var ws = (Node)agent.Call("get_world_state");
+
+			// are any of the flags we want available
+			ws.Call("set_state", StateKeys.FLAG_AVAIL, Flags.Where(f => f.team == Team.PLAYER).Any(f => !f.BeingCarried));
+
+            // are we carrying a flag?
+            ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
+
+            // are all of our flags at home
+            //ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).All(f => f.S));
+
+            // are any of our flags being carried
+            ws.Call("set_state", StateKeys.PLAYER_HAS_FLAG, Flags.Where(f => f.team == Team.ENEMY).Any(f => f.BeingCarried));
+
+
+        }
+	}
 
 
 }

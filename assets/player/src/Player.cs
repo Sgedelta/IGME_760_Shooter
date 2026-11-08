@@ -1,7 +1,6 @@
 using Godot;
 using Godot.Collections;
 using System;
-using System.Diagnostics;
 using SCG = System.Collections.Generic;
 
 public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier

@@ -83,14 +83,6 @@ texture_scale = 7.5
 position = Vector2(-2548, 1434)
 _initialTargetPos = Vector2(110, 70)
 
-[node name="Enemy2" parent="CanvasLayer" unique_id=516453022 instance=ExtResource("3_oi3di")]
-position = Vector2(-2563, 2300)
-_initialTargetPos = Vector2(110, 70)
-
-[node name="Enemy3" parent="CanvasLayer" unique_id=678826783 instance=ExtResource("3_oi3di")]
-position = Vector2(-1446, 2078)
-_initialTargetPos = Vector2(110, 70)
-
 [node name="Flag" parent="CanvasLayer" unique_id=1500888540 groups=["enemy_team"] instance=ExtResource("5_u0c7o")]
 position = Vector2(-633, 615)
 
@@ -118,5 +110,3 @@ position = Vector2(9, -1986)
 position = Vector2(995, -1399)
 
 [editable path="CanvasLayer/Enemy"]
-[editable path="CanvasLayer/Enemy2"]
-[editable path="CanvasLayer/Enemy3"]
