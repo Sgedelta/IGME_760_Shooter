@@ -1,6 +1,8 @@
 using Godot;
 using System;
+using Godot.Collections;
 using SCG = System.Collections.Generic;
+using System.Linq;
 
 public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 {
@@ -55,6 +57,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Export(PropertyHint.Range, "0.0f, 180.0f, 0.1f, radians_as_degrees")] public float AimVariance;
     [Export(PropertyHint.Range, "0.0f, 360.0f, 0.1f, radians_as_degrees")] public float RotationSpeedPerSec;
 
+    [Export(PropertyHint.Range, "0.0f, 90.0f, 0.1f, radians_as_degrees")] public float ConeVisionAngle = Mathf.DegToRad(15.0f);
+    [Export] public float PassiveVisionRadius = 600.0f;
+    private RayCast2D _visionCast;
+    private Area2D _passiveSenseArea;
+    private Area2D _visionArea;
+    private const float VISION_CAST_OFFSET = 60f;
 
     [Signal]
     public delegate void OnDamageTakenEventHandler(int damageTaken);
@@ -89,6 +97,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
         _weapon = GetNode<Weapon>("Weapon");
         _weapon.WeaponTeam = Team.ENEMY;
+        _weapon.AimDir = Vector2.Right;
+
+        _passiveSenseArea  = GetNode<Area2D>("TruePassiveRadius");
+        _visionArea  = GetNode<Area2D>("VisionRadius");
+
+        _visionCast = GetNode<RayCast2D>("VisionCast");
 
         _MaxHealth = Health;
         _touchingFlags = new();
@@ -142,6 +156,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             }
         }
         //FireAtPosition(Vector2.Zero, false);
+        
+        var seenPlayers = GetSensedPlayers(_weapon.AimDir);
+        if(seenPlayers.Count() > 0)
+        {
+            FireAtPosition(seenPlayers.First().GlobalPosition, true);
+        }
     }
 
     public override void _PhysicsProcess(double delta)
@@ -318,4 +338,51 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     {
         Disconnect(SignalName.OnPickup, call);
     }
+
+
+    public Array<Player> GetSensedPlayers(Vector2 lookDirNormalized)
+    {
+        // get passive characters
+        Array<Player> ret = new();
+
+        // passive sense does not need a cast, get all the players in that area
+        ret.AddRange(_passiveSenseArea.GetOverlappingBodies().Where(obj => obj is Player && !ret.Contains(obj)).Cast<Player>());
+
+        // circular vision needs a cast, and if it's too long it needs a check of lookDir
+        var overlaps = _visionArea.GetOverlappingBodies().Where(obj => obj is Player && !ret.Contains(obj));
+
+        foreach(Player p in overlaps)
+        {
+            for(int i = 0; i < 4; i++)
+            {
+                Vector2 offset = new Vector2(VISION_CAST_OFFSET, 0).Rotated(i * Mathf.Pi / 2);
+                // position in local coords + an offset
+                Vector2 target = p.GlobalPosition - Position + offset;
+
+                // if it's too long, we need to check the angle - we can do this even before we raycast
+                if(target.Length() > PassiveVisionRadius && Mathf.Abs(target.AngleTo(lookDirNormalized)) > ConeVisionAngle)
+                {
+                    continue;
+                }
+
+                // run cast
+                _visionCast.TargetPosition = target;
+                _visionCast.ForceRaycastUpdate();
+
+                var collider = _visionCast.GetCollider();
+                // we already know p is a player that is not in the radius
+                if (collider == p)
+                {
+                    ret.Add(p);
+                    GD.Print(p.Name + " seen via raycast");
+                }
+            }
+            
+            
+        }
+
+
+        return ret;
+    }
+
 }
