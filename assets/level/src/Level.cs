@@ -224,7 +224,7 @@ public partial class Level : Node2D
 			ws.Call("set_state", StateKeys.FLAG_AVAIL, !Flags.Where(f => f.team == Team.PLAYER).All(f => f.BeingCarried));
 
             // are we carrying a flag?
-            //ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
+            ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
 
             // are all of our flags at home
             ws.Call("set_state", StateKeys.FLAG_AT_HOME, Flags.Where(f => f.team == Team.ENEMY).All(f => f.OnStand));
