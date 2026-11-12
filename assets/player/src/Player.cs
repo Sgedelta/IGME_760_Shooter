@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Reflection;
 using SCG = System.Collections.Generic;
 
 public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
@@ -22,8 +23,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
     public IPickupable Carrying { get; private set; }
 
     public bool PauseOnDeath = false;
-    public float TimePaused = 10;
-    private bool Respawning = false;
+    private bool Alive = false;
 
     [Export] public float FlagThrowStr = 15;
     public Vector2 DropVel { get { return Velocity + GetLocalMousePosition().Normalized() * FlagThrowStr; } }
@@ -65,6 +65,9 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _damageTimer;
     private Timer _regenTimer;
 
+    Color aliveColor;
+    Color deadColor;
+
     public void TakeDamage(int damage)
     {
         GD.Print($"{Name}: Ow! took {damage} damage");
@@ -81,19 +84,17 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         }
     }
 
-    public void OnPlayerKilled()
+    public void OnDeath()
     {
+        Modulate = new Color(Modulate, 0.7f);
+        Alive = false;
+        Modulate = deadColor;
+
+
         GD.Print("Player Died");
-        this.Position = level.GetRespawnPoint(Team.PLAYER).Position;
-        if (PauseOnDeath)
-        {
-            Respawning = true;
-            TimePaused = 10;
-            this.Modulate = new Color(1, 1, 1, 0.7f);
-        }
-        
+
         _bulletsLeft.Value = _weapon.MagazineSize;
-        Health = 3;
+        Health = _MaxHealth;
 
         foreach (Flag f in _touchingFlags)
         {
@@ -101,8 +102,20 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         }
     }
 
+    public void SpawnAt(Vector2 globalPosition)
+    {
+        Health = _MaxHealth;
+        Alive = true;
+        GlobalPosition = globalPosition;
+        ResetPhysicsInterpolation();
+        Modulate = aliveColor;
+    }
+
     public override void _Ready()
     {
+        aliveColor = new Color(Modulate, 1f);
+        aliveColor = new Color(Modulate, 0.7f);
+
         level = GetTree().Root.GetNode<Level>("Level");
         _weapon = GetNode<Weapon>("Weapon");
         _weapon.WeaponTeam = Team.PLAYER;
@@ -113,7 +126,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
         SetupProgressBars();
 
-        OnKilled += OnPlayerKilled;
+        OnKilled += OnDeath;
 
         _weapon.OnFire += (v) => { _bulletsLeft.Value = v; };
         _weapon.OnReloadStarted += (t) =>
@@ -152,23 +165,10 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
         };
     }
 
-    public override void _Process(double delta)
-    {
-        base._Process(delta);
-        if (Respawning)
-        {
-            TimePaused -= (float)delta;
-            if (TimePaused <= 0)
-            {
-                Respawning = false;
-                this.Modulate = new Color(1, 1, 1, 1f);
-            }
-        }
-    }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (!Respawning)
+        if (Alive)
         {
             Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
@@ -180,7 +180,7 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public override void _Input(InputEvent @event)
     {
-        if (!Respawning)
+        if (Alive)
         {
             if (@event.IsActionPressed("fire"))
             {

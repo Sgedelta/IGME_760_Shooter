@@ -21,7 +21,10 @@ public partial class Level : Node2D
 
 	[Export] public Curve NegativeSpawnChanceByDistance = new Curve();
 
-	private RandomNumberGenerator _rng;
+	[Export] float enemyRespawnTime = 10f;
+    [Export] float playerRespawnTime = 10f;
+
+    private RandomNumberGenerator _rng;
 
 	private Array<Enemy> _enemies;
 	private Array<Player> _players;
@@ -38,7 +41,6 @@ public partial class Level : Node2D
 			f.OnFlagReturn += () => ResetFlag(f);
 			f.Modulate = TeamColors[f.team];
 			f.OnFlagPickedUp += UpdateEnemyInfo;
-
         }
 
 		foreach(FlagReturn fr in FlagReturns)
@@ -53,8 +55,13 @@ public partial class Level : Node2D
 		{
 			p.OnKilled += () => { 
 				OnRespawnRequested(p);
-				UpdateEnemyInfo();
-			};
+				UpdateEnemyInfo(); 
+				var respawnTimer = GetTree().CreateTimer(playerRespawnTime);
+                respawnTimer.Timeout += () =>
+                {
+                    p.SpawnAt(GetRespawnPoint(Team.PLAYER).GlobalPosition);
+                };
+            };
 		}
 
 		foreach (Enemy e in enemiesInScene)
@@ -62,6 +69,11 @@ public partial class Level : Node2D
 			e.OnKilled += () =>
 			{
 				UpdateEnemyInfo();
+				var respawnTimer = GetTree().CreateTimer(enemyRespawnTime);
+				respawnTimer.Timeout += () =>
+				{
+					e.SpawnAt(GetRespawnPoint(Team.ENEMY).GlobalPosition);
+				};
 			};
 		}
 

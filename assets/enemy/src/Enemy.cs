@@ -3,11 +3,10 @@ using System;
 using Godot.Collections;
 using SCG = System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 {
-    Level level;
-
     [Signal] public delegate void OnPickupEventHandler();
 
     [Export] public float Speed { get; private set; } = 25.0f;
@@ -70,7 +69,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Signal]
     public delegate void OnKilledEventHandler();
     public float TimePaused = 10;
-    private bool Respawning = false;
+    private bool Alive = true;
 
     private NavigationAgent2D _navAgent;
 
@@ -87,10 +86,13 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public Node GoapBridge;
 
+    public Color aliveColor;
+    public Color deadColor;
+
     public override void _Ready()
     {
-        level = GetTree().Root.GetNode<Level>("Level");
-        OnKilled += OnEnemyKilled;
+        aliveColor = new Color(Modulate, 1f);
+        aliveColor = new Color(Modulate, 0.7f);
 
         _navAgent = GetNode<NavigationAgent2D>("NavAgent");
         GoapBridge = GetNode<Node>("C# Bridge");
@@ -130,32 +132,26 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
         TargetGlobalPos = GlobalPosition;
     }
-    public void OnEnemyKilled()
-    {
-        GD.Print("Enemy Died");
-        RespawnPoint respawn = level.GetRespawnPoint(Team.ENEMY);
-        this.Position = respawn.Position;
-        Respawning = true;
-        TimePaused = 10;
-        this.Modulate = new Color(1, 0, 0, 0.7f);
 
+    public void OnDeath()
+    {
+        Modulate = deadColor;
+        Alive = false;
+    }
+
+    public void SpawnAt(Vector2 globalPosition)
+    {
         Health = _MaxHealth;
+        Alive = true;
+        GlobalPosition = globalPosition;
+        ResetPhysicsInterpolation();
+        Modulate = aliveColor;
     }
 
 
     public override void _Process(double delta)
     {
         base._Process(delta);
-        if (Respawning)
-        {
-            TimePaused -= (float)delta;
-            if (TimePaused <= 0)
-            {
-                Respawning = false;
-                this.Modulate = new Color(1, 0, 0, 1f);
-            }
-        }
-        //FireAtPosition(Vector2.Zero, false);
         
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
         if(seenPlayers.Count() > 0)
@@ -167,7 +163,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     public override void _PhysicsProcess(double delta)
 	{
         // movement 
-        if(!_navAgent.IsNavigationFinished() && !Respawning)
+        if(!_navAgent.IsNavigationFinished() && Alive)
         {
             Vector2 direction = GlobalPosition.DirectionTo(_navAgent.GetNextPathPosition());
 
@@ -202,7 +198,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public void TakeDamage(int damage)
     {
-        if (!Respawning)
+        if (Alive)
         {
             GD.Print($"{Name}: Ow! took {damage} damage");
             Health -= damage;
@@ -214,6 +210,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
             if (Health <= 0)
             {
+                OnDeath();
                 EmitSignal(SignalName.OnKilled);
             }
         }
