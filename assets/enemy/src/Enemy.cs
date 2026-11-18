@@ -9,6 +9,8 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     Level level;
 
     [Signal] public delegate void OnPickupEventHandler();
+    [Signal] public delegate void OnRequestCoverLocationEventHandler();
+    [Signal] public delegate void OnRequestFlagLocationEventHandler(Team flagTeam);
 
     [Export] public float Speed { get; private set; } = 25.0f;
 
@@ -85,6 +87,8 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _damageTimer;
     private Timer _regenTimer;
 
+    private Vector2 _lastKnownPlayerPosition = new Vector2();
+
     public Node GoapBridge;
 
     public override void _Ready()
@@ -160,7 +164,9 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
         if(seenPlayers.Count() > 0)
         {
-            FireAtPosition(seenPlayers.First().GlobalPosition, true);
+            _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
+            FireAtPosition(_lastKnownPlayerPosition, true);
+            
         }
     }
 
@@ -174,6 +180,26 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             MoveInDir(direction);
         }
 	}
+
+    public void SeekArbitraryGolablPos(Vector2 pos)
+    {
+        TargetGlobalPos = pos;
+    }
+
+    public void SeekPlayerFlag()
+    {
+
+    }
+
+    public void SeekReturnedFlag()
+    {
+
+    }
+
+    public void SeekLastKnownPlayerPos()
+    {
+        SeekArbitraryGolablPos(_lastKnownPlayerPosition);
+    }
 
     private async void FirstFrameSetup()
     {
