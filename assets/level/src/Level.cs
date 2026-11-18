@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using SCG = System.Collections.Generic;
 
@@ -31,9 +32,11 @@ public partial class Level : Node2D
 	private Array<Vector2> _coverPositions;
 	private Array<Vector2> _coverOffsets = new Array<Vector2>()
 	{
-		new(.1f, .1f), new(.9f, .1f),
-		new(.9f, .1f), new(.9f, .1f)
+		new(.5f, .5f)
+		//new(.25f, .25f), new(.75f, .25f),
+		//new(.25f, .75f), new(.75f, .75f)
 	};
+	private RayCast2D _coverRaycast;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -43,6 +46,7 @@ public partial class Level : Node2D
 		_flagInitialPositions = new Dictionary<Flag, Vector2>();
 
 		_obstacles = GetNode<TileMapLayer>("%Obstacles");
+		_coverRaycast = GetNode<RayCast2D>("%CoverCast");
 		_coverIndexes = new();
 		var minMax = new Vector4(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
 		var used_cells = _obstacles.GetUsedCells();
@@ -106,7 +110,6 @@ public partial class Level : Node2D
 			{
 				var pos = top_left + offset * tileSize;
 				_coverPositions.Add(pos);
-				GD.Print(pos);
 			}
 		}
 
@@ -145,8 +148,8 @@ public partial class Level : Node2D
 
 			e.OnRequestFlagLocation += (team) =>
 			{
-				e.SeekArbitraryGolablPos(
-					Flags.Where(f => f.team == team)
+				e.SeekArbitraryGlobalPos(
+					Flags.Where(f => (int)f.team == team)
 					.OrderBy(
 						f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
 					).First().GlobalPosition
@@ -155,7 +158,18 @@ public partial class Level : Node2D
 
 			e.OnRequestCoverLocation += () =>
 			{
-
+				var sortedPositions = _coverPositions.OrderBy(p => p.DistanceSquaredTo(e.GlobalPosition));
+				foreach(var point in sortedPositions)
+				{
+					_coverRaycast.GlobalPosition = point;
+					_coverRaycast.TargetPosition = _coverRaycast.ToLocal(e.LastKnownPlayerPosition);
+					_coverRaycast.ForceRaycastUpdate();
+					if (_coverRaycast.IsColliding())
+					{
+						e.SeekArbitraryGlobalPos(point);
+						return;
+					}
+                }
 			};
 		}
 

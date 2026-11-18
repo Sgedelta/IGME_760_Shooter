@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_oq0ac"]
 [ext_resource type="Script" uid="uid://c48doc0kviaqu" path="res://addons/goap/goap_agent.gd" id="4_hw76b"]
 [ext_resource type="Script" uid="uid://clx80moch4b57" path="res://assets/common/src/goals/score_flag.gd" id="5_e24bd"]
-[ext_resource type="Script" uid="uid://c8w7nn33r57el" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
+[ext_resource type="Script" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
 [ext_resource type="Script" uid="uid://de0jcja8ycww6" path="res://assets/common/src/goals/stop_player.gd" id="6_e24bd"]
 [ext_resource type="Script" uid="uid://dysm3rn05yi37" path="res://assets/common/src/actions/kill_player.gd" id="7_ph424"]
 [ext_resource type="Script" uid="uid://cspd4oxdiofyy" path="res://assets/common/src/actions/return_our_flag.gd" id="8_ct1qm"]

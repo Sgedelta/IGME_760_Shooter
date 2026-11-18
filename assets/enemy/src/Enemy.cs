@@ -10,7 +10,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     [Signal] public delegate void OnPickupEventHandler();
     [Signal] public delegate void OnRequestCoverLocationEventHandler();
-    [Signal] public delegate void OnRequestFlagLocationEventHandler(Team flagTeam);
+    [Signal] public delegate void OnRequestFlagLocationEventHandler(int flagTeam);
 
     [Export] public float Speed { get; private set; } = 25.0f;
 
@@ -87,9 +87,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _damageTimer;
     private Timer _regenTimer;
 
-    private Vector2 _lastKnownPlayerPosition = new Vector2();
+    public Vector2 LastKnownPlayerPosition = new Vector2();
 
     public Node GoapBridge;
+
+    private Timer _reaimTimer;
+    private Timer _rehideTimer;
 
     public override void _Ready()
     {
@@ -112,6 +115,15 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         _touchingFlags = new();
 
         _rng = new RandomNumberGenerator();
+
+        _reaimTimer = new Timer();
+        _reaimTimer.WaitTime = .1f;
+        _reaimTimer.OneShot = true;
+        AddChild(_reaimTimer);
+        _rehideTimer = new Timer();
+        _rehideTimer.WaitTime = .5f;
+        _rehideTimer.OneShot = true;
+        AddChild(_rehideTimer);
 
         Callable.From(FirstFrameSetup).CallDeferred();
 
@@ -164,9 +176,8 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
         if(seenPlayers.Count() > 0)
         {
-            _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
-            FireAtPosition(_lastKnownPlayerPosition, true);
-            
+            LastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
+            FireAtPosition(LastKnownPlayerPosition, true);
         }
     }
 
@@ -181,24 +192,36 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         }
 	}
 
-    public void SeekArbitraryGolablPos(Vector2 pos)
+    public void SeekArbitraryGlobalPos(Vector2 pos)
     {
         TargetGlobalPos = pos;
     }
 
     public void SeekPlayerFlag()
     {
-
+        EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.PLAYER);
     }
 
-    public void SeekReturnedFlag()
+    public void SeekOurFlag()
     {
+        EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.ENEMY);
+    }
 
+    public void SeekCover()
+    {
+        if(!_rehideTimer.IsStopped())
+        {
+
+            return;
+        }
+
+        EmitSignal(SignalName.OnRequestCoverLocation);
+        _rehideTimer.Start();
     }
 
     public void SeekLastKnownPlayerPos()
     {
-        SeekArbitraryGolablPos(_lastKnownPlayerPosition);
+        SeekArbitraryGlobalPos(LastKnownPlayerPosition);
     }
 
     private async void FirstFrameSetup()
@@ -207,6 +230,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
 
         TargetGlobalPos = _initialTargetPos;
+
     }
 
     public void MoveInDir(Vector2 dir)
@@ -249,6 +273,15 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public bool LookAtPosition(Vector2 targetGlobalPos, float rotationChange, bool overrideCurrent)
     {
+        if (!_reaimTimer.IsStopped())
+        {
+            return false;
+        }
+        else
+        {
+            _reaimTimer.Start();
+        }
+
         // check if we can fire / if we need to override
         if (IsInstanceValid(_aimTween) && _aimTween.IsRunning())
         {
@@ -400,7 +433,6 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
                 if (collider == p)
                 {
                     ret.Add(p);
-                    GD.Print(p.Name + " seen via raycast");
                 }
             }
             
