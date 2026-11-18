@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cwg5fa0wqa21d" path="res://assets/weapon/src/Weapon.cs" id="1_o2wld"]
 [ext_resource type="PackedScene" uid="uid://bfq4g4l4bjnvi" path="res://assets/weapon/scenes/Projectile.tscn" id="2_3fy1u"]
 [ext_resource type="Texture2D" uid="uid://u0bmduiaoqkw" path="res://assets/common/sprites/gun.png" id="3_j3min"]
+[ext_resource type="Texture2D" uid="uid://c4tono1haq1jv" path="res://test_light_tex.png" id="4_2d5l5"]
 
 [node name="Weapon" type="Node2D" unique_id=625231334]
 script = ExtResource("1_o2wld")
@@ -16,6 +17,24 @@ unique_name_in_owner = true
 z_index = 1
 scale = Vector2(0.265, 0.265)
 texture = ExtResource("3_j3min")
+
+[node name="PointLight2D" type="PointLight2D" parent="Display" unique_id=839424443]
+range_layer_min = -10
+range_layer_max = 41
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = ExtResource("4_2d5l5")
+offset = Vector2(2304, 0)
+texture_scale = 4.0
+
+[node name="PointLight2D2" type="PointLight2D" parent="Display" unique_id=679108722]
+range_layer_min = -10
+range_layer_max = 41
+range_item_cull_mask = 2
+shadow_color = Color(0, 0, 0, 1)
+texture = ExtResource("4_2d5l5")
+offset = Vector2(2304, 0)
+texture_scale = 4.0
 
 [node name="FireTimer" type="Timer" parent="." unique_id=454798403]
 unique_name_in_owner = true

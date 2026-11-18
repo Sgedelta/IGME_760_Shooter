@@ -22,6 +22,18 @@ radius = 300.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_h8o35"]
 radius = 1500.0
 
+[sub_resource type="Gradient" id="Gradient_7vhbv"]
+offsets = PackedFloat32Array(0, 0.748, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lqefk"]
+gradient = SubResource("Gradient_7vhbv")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [node name="Enemy" type="CharacterBody2D" unique_id=374600470 groups=["enemy_team"]]
 collision_layer = 2
 collision_mask = 17
@@ -95,3 +107,19 @@ shape = SubResource("CircleShape2D_h8o35")
 [node name="VisionCast" type="RayCast2D" parent="." unique_id=659612904]
 target_position = Vector2(1500, 0)
 collision_mask = 3
+
+[node name="VisionLight" type="PointLight2D" parent="." unique_id=1727429744]
+range_layer_min = -4
+range_layer_max = 1
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_lqefk")
+texture_scale = 3.0
+
+[node name="TerrainLight" type="PointLight2D" parent="." unique_id=226250976]
+range_layer_min = -4
+range_layer_max = 2
+range_item_cull_mask = 2
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_lqefk")
+texture_scale = 4.5

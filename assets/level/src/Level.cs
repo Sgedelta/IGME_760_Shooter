@@ -157,6 +157,11 @@ public partial class Level : Node2D
 			{
 
 			};
+
+			e.OnDamageTaken += (_) =>
+			{
+				e.LookAtPosition(_players.OrderBy(p => p.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).First().GlobalPosition, 0, false);
+			};
 		}
 
 		_enemies = new Array<Enemy>(enemiesInScene);

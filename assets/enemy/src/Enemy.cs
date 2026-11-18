@@ -91,6 +91,8 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public Node GoapBridge;
 
+    private bool _aimingToShoot;
+
     public override void _Ready()
     {
         level = GetTree().Root.GetNode<Level>("Level");
@@ -167,6 +169,13 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
             FireAtPosition(_lastKnownPlayerPosition, true);
             
+        }
+
+        GD.Print(_aimingToShoot);
+        if( (!IsInstanceValid(_aimTween) || (IsInstanceValid(_aimTween) && !_aimingToShoot)) && !_navAgent.IsNavigationFinished())
+        {
+            GD.Print("Aiming...");
+            LookAtPosition(_navAgent.GetNextPathPosition(), 0.0f, false);
         }
     }
 
@@ -255,6 +264,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             if (overrideCurrent)
             {
                 _aimTween.Kill();
+                //_aimingToShoot = false;
             }
             else
             {
@@ -286,14 +296,15 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             _weapon.Reload();
             return;
         }
-
-        if(!LookAtPosition(targetGlobalPos, _rng.RandfRange(-AimVariance, AimVariance), overrideCurrent))
+        _aimingToShoot = true;
+        if (!LookAtPosition(targetGlobalPos, _rng.RandfRange(-AimVariance, AimVariance), overrideCurrent))
         {
             return;
         }
 
         // fire
         _aimTween.Finished += _weapon.TryFire;
+        _aimTween.Finished += () => { _aimingToShoot = false; };
     }
 
     public bool TryPickup(IPickupable item)
