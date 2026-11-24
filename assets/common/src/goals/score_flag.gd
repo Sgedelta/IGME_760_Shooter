@@ -10,12 +10,15 @@ func is_valid() -> bool:
 		return false;
 	return (
 		!_world_state.get_state(StateKeys.PLAYER_HAS_FLAG, true)
+		&& (_world_state.get_state(StateKeys.FLAG_AVAIL, true)
+		 || _world_state.get_state(StateKeys.HAS_FLAG, true)
+		)
 	);
 	# return _world_state.get_state(StateKeys.KEY, false)
 
 # get prio, or how important this goal is
 func get_priority() -> int:
-	return 15;
+	return priority;
 
 # what happens when this goal is achieved - should likely lower the prio
 func on_goal_achieved() -> void:

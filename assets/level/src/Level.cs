@@ -162,6 +162,16 @@ public partial class Level : Node2D
 
 			};
 
+			e.OnRequestFlagStandLocation += (team) =>
+			{
+				e.SeekArbitraryGolablPos(
+					FlagReturns.Where(fr => fr.team == team)
+					.OrderBy(
+						fr => fr.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
+					).First().GlobalPosition
+				);
+			};
+
 			e.OnDamageTaken += (_) =>
 			{
 				e.LookAtPosition(_players.OrderBy(p => p.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).First().GlobalPosition, 0, false);

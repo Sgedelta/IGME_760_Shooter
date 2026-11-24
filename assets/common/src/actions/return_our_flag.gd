@@ -21,4 +21,4 @@ func perform(_delta) -> bool:
 
 # the cost of taking this step
 func get_cost(_blackboard) -> int:
-	return bridge.get_dist_to_enemy_flag() / 2; #div 2 to discount, because returning flags is important
+	return 1; #div 2 to discount, because returning flags is important

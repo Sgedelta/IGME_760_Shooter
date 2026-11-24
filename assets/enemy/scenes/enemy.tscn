@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://clx80moch4b57" path="res://assets/common/src/goals/score_flag.gd" id="5_e24bd"]
 [ext_resource type="Script" uid="uid://c8w7nn33r57el" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
 [ext_resource type="Script" uid="uid://de0jcja8ycww6" path="res://assets/common/src/goals/stop_player.gd" id="6_e24bd"]
+[ext_resource type="Script" uid="uid://dim7i6qo3a2p0" path="res://assets/common/src/goals/return_our_taken_flag.gd" id="7_h8o35"]
 [ext_resource type="Script" uid="uid://dysm3rn05yi37" path="res://assets/common/src/actions/kill_player.gd" id="7_ph424"]
 [ext_resource type="Script" uid="uid://cspd4oxdiofyy" path="res://assets/common/src/actions/return_our_flag.gd" id="8_ct1qm"]
 [ext_resource type="Script" uid="uid://ewsptkcw5wpq" path="res://assets/common/src/actions/score_held_flag.gd" id="9_6w2sh"]
@@ -61,11 +62,17 @@ script = ExtResource("5_nmqyq")
 
 [node name="Goals" type="Node" parent="C# Bridge" unique_id=1329246907]
 
+[node name="ReturnTakenFlag" type="Node" parent="C# Bridge/Goals" unique_id=527517465]
+script = ExtResource("7_h8o35")
+priority = 25
+
 [node name="Score" type="Node" parent="C# Bridge/Goals" unique_id=2081677527]
 script = ExtResource("5_e24bd")
+priority = 10
 
 [node name="StopPlayer" type="Node" parent="C# Bridge/Goals" unique_id=974745692]
 script = ExtResource("6_e24bd")
+priority = 50
 
 [node name="Actions" type="Node" parent="C# Bridge" unique_id=1543241269]
 

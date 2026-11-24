@@ -11,6 +11,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Signal] public delegate void OnPickupEventHandler();
     [Signal] public delegate void OnRequestCoverLocationEventHandler();
     [Signal] public delegate void OnRequestFlagLocationEventHandler(Team flagTeam);
+    [Signal] public delegate void OnRequestFlagStandLocationEventHandler(Team flagStandTeam);
 
     [Export] public float Speed { get; private set; } = 25.0f;
 
@@ -218,6 +219,18 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         SeekArbitraryGolablPos(LastKnownPlayerPosition);
     }
 
+    public void SeekPlayerFlagReturn()
+    {
+        EmitSignal(SignalName.OnRequestFlagStandLocation, (int)Team.PLAYER);
+
+    }
+
+    public void SeekOurFlagReturn()
+    {
+        EmitSignal(SignalName.OnRequestFlagStandLocation, (int)Team.ENEMY);
+
+    }
+
     public int GetLastSeenPlayerCount()
     {
         return LastSensedPlayers.Count();
@@ -272,7 +285,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
             if (Health <= 0)
             {
+                if (Carrying != null)
+                {
+                    TryDrop(Carrying);
+                }
                 EmitSignal(SignalName.OnKilled);
+                
             }
         }
 

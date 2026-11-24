@@ -66,6 +66,7 @@ func guide_to_home():
 	if !active:
 		return;
 	
+	actor.call("SeekOurFlagReturn")
 	pass
 
 func check_killed_player() -> bool:
