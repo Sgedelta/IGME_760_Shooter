@@ -16,9 +16,9 @@ func enter() -> void:
 
 # Return true once the action is done, return false otherwise
 func perform(_delta) -> bool:
-	
-	return GoapWorldState.is_satisfied(StateKeys.FLAG_AT_HOME, true);
+	bridge.go_to_our_flag()
+	return bridge.get_if_flag_home();
 
 # the cost of taking this step
 func get_cost(_blackboard) -> int:
-	return 1; #div 2 to discount, because returning flags is important
+	return bridge.get_dist_to_enemy_flag() / 2.0; #div 2 to discount, because returning flags is important

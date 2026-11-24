@@ -84,3 +84,6 @@ func get_dist_to_last_player_pos() -> float:
 
 func get_dist_to_home() -> float:
 	return 20;
+
+func get_if_flag_home() -> bool:
+	return agent.get_world_state().get_state(StateKeys.FLAG_AT_HOME, true);

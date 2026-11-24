@@ -114,6 +114,7 @@ public partial class Level : Node2D
 		{
 			_flagInitialPositions.Add(f, f.GlobalPosition);
 			f.OnFlagReturn += () => ResetFlag(f);
+			f.OnFlagReturn += UpdateEnemyInfo;
 			f.Modulate = TeamColors[f.team];
 			f.OnFlagPickedUp += UpdateEnemyInfo;
 			f.OnFlagDropped += UpdateEnemyInfo;
