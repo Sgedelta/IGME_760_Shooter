@@ -2,6 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://dni7wlmi4xms3" path="res://assets/level/resources/level_set.tres" id="1_kci6a"]
 [ext_resource type="Script" uid="uid://gdqa0jnai3d2" path="res://assets/level/src/Level.cs" id="1_p4p1v"]
+[ext_resource type="Curve" uid="uid://b4y07yluvx42w" path="res://assets/level/resources/spawn_chance_by_dist.tres" id="2_hre10"]
 [ext_resource type="PackedScene" uid="uid://itrfddb0i63k" path="res://assets/player/scenes/player.tscn" id="2_vonw3"]
 [ext_resource type="PackedScene" uid="uid://bbqms3hyc78og" path="res://assets/enemy/scenes/enemy.tscn" id="3_oi3di"]
 [ext_resource type="PackedScene" uid="uid://xqmobj0njihn" path="res://assets/flags/scenes/flag.tscn" id="5_u0c7o"]
@@ -25,12 +26,16 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[node name="Level" type="Node2D" unique_id=26221713]
+[node name="Level" type="Node2D" unique_id=26221713 node_paths=PackedStringArray("Flags", "FlagReturns", "RespawnPoints")]
 script = ExtResource("1_p4p1v")
 TeamColors = Dictionary[int, Color]({
-1: Color(0.3882353, 0.79607844, 1, 1),
-2: Color(1, 0.12941177, 0.047058824, 1)
+1: Color(0.29330832, 0.5053447, 0.9964331, 1),
+2: Color(0.9945772, 5.4628404e-06, 9.62615e-07, 1)
 })
+Flags = [NodePath("CanvasLayer/Flag"), NodePath("CanvasLayer/PlayerFlag")]
+FlagReturns = [NodePath("CanvasLayer/FlagReturn"), NodePath("CanvasLayer/EnemyFlagReturn")]
+RespawnPoints = [NodePath("CanvasLayer/Respawns/PlayerRespawn"), NodePath("CanvasLayer/Respawns/PlayerRespawn2"), NodePath("CanvasLayer/Respawns/PlayerRespawn3"), NodePath("CanvasLayer/Respawns/EnemyRespawn"), NodePath("CanvasLayer/Respawns/EnemyRespawn2"), NodePath("CanvasLayer/Respawns/EnemyRespawn3")]
+NegativeSpawnChanceByDistance = ExtResource("2_hre10")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=446939736]
 layer = -1
@@ -82,13 +87,16 @@ position = Vector2(-2548, 1434)
 _initialTargetPos = Vector2(110, 70)
 
 [node name="Flag" parent="CanvasLayer" unique_id=1500888540 groups=["enemy_team"] instance=ExtResource("5_u0c7o")]
-position = Vector2(-633, 615)
+position = Vector2(2364, -2385)
 
 [node name="PlayerFlag" parent="CanvasLayer" unique_id=362796721 groups=["player_team"] instance=ExtResource("5_u0c7o")]
-position = Vector2(-813, -454)
+position = Vector2(-2434, 2439)
 
 [node name="FlagReturn" parent="CanvasLayer" unique_id=1886748476 groups=["player_team"] instance=ExtResource("6_hca2g")]
-position = Vector2(473, 648)
+position = Vector2(-2434, 2439)
+
+[node name="EnemyFlagReturn" parent="CanvasLayer" unique_id=1539243034 groups=["enemy_team"] instance=ExtResource("6_hca2g")]
+position = Vector2(2364, -2385)
 
 [node name="Respawns" type="Node" parent="CanvasLayer" unique_id=1157707431]
 

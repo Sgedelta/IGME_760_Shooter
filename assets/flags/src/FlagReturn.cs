@@ -8,10 +8,21 @@ public partial class FlagReturn : Area2D
 
 	Dictionary<ICarrier, Callable> _touchingCarriers;
 
+	public Team team;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
         _touchingCarriers = new Dictionary<ICarrier, Callable>();
+
+        if (IsInGroup("enemy_team"))
+        {
+            team = Team.ENEMY;
+        }
+        else if (IsInGroup("player_team"))
+        {
+            team = Team.PLAYER;
+        }
 
     }
 
