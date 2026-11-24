@@ -87,6 +87,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _regenTimer;
 
     private Vector2 _lastKnownPlayerPosition = new Vector2();
+    public bool canSeePlayer = false;
 
     public Node GoapBridge;
 
@@ -161,9 +162,13 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
         if(seenPlayers.Count() > 0)
         {
+            canSeePlayer = true;
             _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
             FireAtPosition(_lastKnownPlayerPosition, true);
-            
+        }
+        else
+        {
+            canSeePlayer = false;
         }
 
         GD.Print(_aimingToShoot);
