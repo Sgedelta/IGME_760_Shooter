@@ -29,12 +29,91 @@ public partial class Level : Node2D
 	private Array<Enemy> _enemies;
 	private Array<Player> _players;
 
+	private TileMapLayer _obstacles;
+	private Array<Vector2I> _coverIndexes;
+	private Array<Vector2> _coverPositions;
+	private Array<Vector2> _coverOffsets = new Array<Vector2>()
+	{
+		new(.1f, .1f), new(.9f, .1f),
+		new(.9f, .1f), new(.9f, .1f)
+	};
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_rng = new RandomNumberGenerator();
 		Scores = new Dictionary<Team, int>();
 		_flagInitialPositions = new Dictionary<Flag, Vector2>();
+
+		_obstacles = GetNode<TileMapLayer>("%Obstacles");
+		_coverIndexes = new();
+		var minMax = new Vector4(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
+		var used_cells = _obstacles.GetUsedCells();
+
+		foreach (var cell in used_cells)
+		{
+			if (cell.X < minMax.X)
+			{
+				minMax.X = cell.X;
+			}
+			if (cell.X > minMax.Z)
+			{
+				minMax.Z = cell.X;
+			}
+			if (cell.Y < minMax.Y)
+			{
+				minMax.Y = cell.Y;
+			}
+			if (cell.Y > minMax.W)
+			{
+				minMax.W = cell.Y;
+			}
+		}
+
+		foreach (var cell in used_cells) 
+		{
+			for (var x = cell.X-1; x <= cell.X+1; x += 2)
+			{
+				for (var y = cell.Y-1; y <= cell.Y+1; y += 2)
+				{
+					// ignore points outside of the bounds
+					if(!(x >= minMax.X && x <= minMax.Z && y >= minMax.Y && y <= minMax.W))
+					{
+						continue;
+					}
+
+					Vector2I index = new Vector2I(x, y);
+
+                    // ignore walls
+					if (used_cells.Contains(index))
+					{
+						continue;
+					}
+
+                    // do not double store
+                    if (!_coverIndexes.Contains(index))
+					{
+						_coverIndexes.Add(index);
+					}
+				}
+			}
+		}
+
+		//get the actual positions 
+		_coverPositions = new();
+        Vector2 tileSize = _obstacles.TileSet.TileSize;
+		foreach(var i in _coverIndexes)
+		{
+			var top_left = tileSize * i;
+            foreach (var offset in _coverOffsets)
+			{
+				var pos = top_left + offset * tileSize;
+				_coverPositions.Add(pos);
+				GD.Print(pos);
+			}
+		}
+
+
 		foreach(Flag f in Flags)
 		{
 			_flagInitialPositions.Add(f, f.GlobalPosition);
@@ -74,6 +153,26 @@ public partial class Level : Node2D
 				{
 					e.SpawnAt(GetRespawnPoint(Team.ENEMY).GlobalPosition);
 				};
+			};
+
+			e.OnRequestFlagLocation += (team) =>
+			{
+				e.SeekArbitraryGolablPos(
+					Flags.Where(f => f.team == team)
+					.OrderBy(
+						f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
+					).First().GlobalPosition
+				);
+			};
+
+			e.OnRequestCoverLocation += () =>
+			{
+
+			};
+
+			e.OnDamageTaken += (_) =>
+			{
+				e.LookAtPosition(_players.OrderBy(p => p.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).First().GlobalPosition, 0, false);
 			};
 		}
 

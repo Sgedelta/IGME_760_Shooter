@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://cnvsxmuqy8clq"]
+
+[ext_resource type="Script" uid="uid://bnluyi1nc03mj" path="res://assets/weapon/scenes/vp_tex_saver.gd" id="1_8teo7"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8teo7"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_8teo7"]
+offsets = PackedFloat32Array(0.035955057, 0.25168538, 0.8359551, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.9284733, 0.9284733, 0.9284733, 0.73340034, 0.5686275, 0.5686275, 0.5686275, 0, 0.5686275, 0.5686275, 0.5686275, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_8teo7"]
+gradient = SubResource("Gradient_8teo7")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(0.65384614, 0)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_xi4nv"]
+
+[sub_resource type="Gradient" id="Gradient_xi4nv"]
+offsets = PackedFloat32Array(0, 0.053932585, 0.93483144, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xi4nv"]
+gradient = SubResource("Gradient_xi4nv")
+fill = 3
+fill_from = Vector2(-0.1, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="SubViewportContainer" type="SubViewportContainer" unique_id=1937763924]
+custom_minimum_size = Vector2(256, 128)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=2142379654 node_paths=PackedStringArray("sub_viewport")]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 648)
+size_2d_override = Vector2i(256, 128)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+script = ExtResource("1_8teo7")
+filename = "test_light_tex"
+sub_viewport = NodePath(".")
+
+[node name="TextureRect2" type="TextureRect" parent="SubViewport" unique_id=220787465]
+material = SubResource("CanvasItemMaterial_8teo7")
+anchors_preset = -1
+anchor_left = 0.68
+anchor_top = 0.5
+anchor_right = 0.68
+anchor_bottom = 0.5
+offset_left = -63.695
+offset_top = -64.0
+offset_right = 64.30501
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(64, 0)
+texture = SubResource("GradientTexture2D_8teo7")
+
+[node name="TextureRect" type="TextureRect" parent="SubViewport" unique_id=726232635]
+material = SubResource("CanvasItemMaterial_xi4nv")
+anchors_preset = -1
+anchor_right = 0.68
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_xi4nv")

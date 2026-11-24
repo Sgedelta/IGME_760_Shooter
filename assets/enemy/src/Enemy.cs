@@ -8,6 +8,8 @@ using System.Net.Http;
 public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 {
     [Signal] public delegate void OnPickupEventHandler();
+    [Signal] public delegate void OnRequestCoverLocationEventHandler();
+    [Signal] public delegate void OnRequestFlagLocationEventHandler(Team flagTeam);
 
     [Export] public float Speed { get; private set; } = 25.0f;
 
@@ -84,10 +86,13 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _damageTimer;
     private Timer _regenTimer;
 
+    private Vector2 _lastKnownPlayerPosition = new Vector2();
+
     public Node GoapBridge;
 
     public Color aliveColor;
     public Color deadColor;
+    private bool _aimingToShoot;
 
     public override void _Ready()
     {
@@ -156,7 +161,16 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
         if(seenPlayers.Count() > 0)
         {
-            FireAtPosition(seenPlayers.First().GlobalPosition, true);
+            _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
+            FireAtPosition(_lastKnownPlayerPosition, true);
+            
+        }
+
+        GD.Print(_aimingToShoot);
+        if( (!IsInstanceValid(_aimTween) || (IsInstanceValid(_aimTween) && !_aimingToShoot)) && !_navAgent.IsNavigationFinished())
+        {
+            GD.Print("Aiming...");
+            LookAtPosition(_navAgent.GetNextPathPosition(), 0.0f, false);
         }
     }
 
@@ -170,6 +184,26 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             MoveInDir(direction);
         }
 	}
+
+    public void SeekArbitraryGolablPos(Vector2 pos)
+    {
+        TargetGlobalPos = pos;
+    }
+
+    public void SeekPlayerFlag()
+    {
+
+    }
+
+    public void SeekReturnedFlag()
+    {
+
+    }
+
+    public void SeekLastKnownPlayerPos()
+    {
+        SeekArbitraryGolablPos(_lastKnownPlayerPosition);
+    }
 
     private async void FirstFrameSetup()
     {
@@ -226,6 +260,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             if (overrideCurrent)
             {
                 _aimTween.Kill();
+                //_aimingToShoot = false;
             }
             else
             {
@@ -257,14 +292,15 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             _weapon.Reload();
             return;
         }
-
-        if(!LookAtPosition(targetGlobalPos, _rng.RandfRange(-AimVariance, AimVariance), overrideCurrent))
+        _aimingToShoot = true;
+        if (!LookAtPosition(targetGlobalPos, _rng.RandfRange(-AimVariance, AimVariance), overrideCurrent))
         {
             return;
         }
 
         // fire
         _aimTween.Finished += _weapon.TryFire;
+        _aimTween.Finished += () => { _aimingToShoot = false; };
     }
 
     public bool TryPickup(IPickupable item)
