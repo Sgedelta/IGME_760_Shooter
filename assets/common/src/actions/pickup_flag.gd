@@ -1,5 +1,7 @@
 extends GoapAction
 
+#never do this
+@onready var bridge = get_node("../../") as GoapBridge
 
 # Set effects and preconditions here
 func _ready() -> void:
@@ -14,13 +16,13 @@ func _ready() -> void:
 
 # Called when goal is begun
 func enter() -> void:
-	
+	bridge.go_to_player_flag();
 	pass;
 
 # Return true once the action is done, return false otherwise
 func perform(_delta) -> bool:
 	
-	return true;
+	return bridge.has_held_flag();
 
 # the cost of taking this step
 func get_cost(_blackboard) -> int:

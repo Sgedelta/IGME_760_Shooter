@@ -1,5 +1,5 @@
 class_name GoapBridge
-extends Node
+extends Node2D
 
 @export var active = true;
 @export var enemy_number = 1;
@@ -28,15 +28,58 @@ func _process(delta: float) -> void:
 func has_held_flag() -> bool:
 	return actor.get("IsCarrying")
 
-func get_dist_to_flag() -> float:
-	# TODO: use enemy sensing to try and find flag
+func get_dist_to_player_flag() -> float:
 	
-	return 5;
+	return actor.get("DistanceToNearestPlayerFlag");
 
-func maintain_distance_from_player():
-	# TODO: find player location and move to a point near them
+func get_dist_to_enemy_flag() -> float:
+	
+	return actor.get("DistanceToNearestEnemyFlag");
+
+func maintain_distance_from_player(dist : float ):
+	
+	if !active:
+		return;
+	
+	actor.call("SeekLastKnownPlayerPos")
+	actor.DistanceToPathEndToStop = dist;
+	pass
+
+func go_to_our_flag():
+	
+	if !active:
+		return;
+	
+	actor.call("SeekReturnedFlag")
+	actor.DistanceToPathEndToStop = 0;
+	pass
+
+func go_to_player_flag():
+	if !active:
+		return;
+	
+	actor.call("SeekPlayerFlag")
+	actor.DistanceToPathEndToStop = 0;
 	pass
 
 func guide_to_home():
+	if !active:
+		return;
 	
 	pass
+
+func check_killed_player() -> bool:
+	if !active:
+		return false;
+	return actor.call("CheckKilledPlayer");
+
+func get_seen_player_count() -> int:
+	if !active:
+		return 0;
+	return actor.call("GetLastSeenPlayerCount")
+
+func get_dist_to_last_player_pos() -> float:
+	return global_position.distance_to(actor.LastKnownPlayerPosition)
+
+func get_dist_to_home() -> float:
+	return 20;

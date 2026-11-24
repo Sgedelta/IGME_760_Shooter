@@ -87,11 +87,20 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     private Timer _damageTimer;
     private Timer _regenTimer;
 
-    private Vector2 _lastKnownPlayerPosition = new Vector2();
+    public Vector2 LastKnownPlayerPosition = new Vector2();
 
     public Node GoapBridge;
 
     private bool _aimingToShoot;
+
+    public Array<Player> LastSensedPlayers = new();
+
+    public float DistanceToNearestPlayerFlag; // set from level
+    public float DistanceToNearestEnemyFlag; // set from level
+
+    public float DistanceToPathEndToStop = 0.0f;
+
+    public bool HasKilledPlayer = false;
 
     public override void _Ready()
     {
@@ -164,17 +173,16 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         //FireAtPosition(Vector2.Zero, false);
         
         var seenPlayers = GetSensedPlayers(_weapon.AimDir);
+        LastSensedPlayers = seenPlayers;
         if(seenPlayers.Count() > 0)
         {
-            _lastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
-            FireAtPosition(_lastKnownPlayerPosition, true);
+            LastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
+            FireAtPosition(LastKnownPlayerPosition, true);
             
         }
 
-        GD.Print(_aimingToShoot);
         if( (!IsInstanceValid(_aimTween) || (IsInstanceValid(_aimTween) && !_aimingToShoot)) && !_navAgent.IsNavigationFinished())
         {
-            GD.Print("Aiming...");
             LookAtPosition(_navAgent.GetNextPathPosition(), 0.0f, false);
         }
     }
@@ -182,7 +190,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     public override void _PhysicsProcess(double delta)
 	{
         // movement 
-        if(!_navAgent.IsNavigationFinished() && !Respawning)
+        if(!(_navAgent.IsNavigationFinished() || _navAgent.GetPathLength() < DistanceToPathEndToStop) && !Respawning)
         {
             Vector2 direction = GlobalPosition.DirectionTo(_navAgent.GetNextPathPosition());
 
@@ -197,17 +205,32 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public void SeekPlayerFlag()
     {
-
+        EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.PLAYER);
     }
 
     public void SeekReturnedFlag()
     {
-
+        EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.ENEMY);
     }
 
     public void SeekLastKnownPlayerPos()
     {
-        SeekArbitraryGolablPos(_lastKnownPlayerPosition);
+        SeekArbitraryGolablPos(LastKnownPlayerPosition);
+    }
+
+    public int GetLastSeenPlayerCount()
+    {
+        return LastSensedPlayers.Count();
+    }
+
+    public bool CheckKilledPlayer()
+    {
+        if(!HasKilledPlayer)
+        {
+            return false;
+        }
+        HasKilledPlayer = false;
+        return true;
     }
 
     private async void FirstFrameSetup()
@@ -322,7 +345,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         }
 
         // now, check the group. We can only pick up flags of the enemy team
-        if (!f.IsInGroup("enemy_team"))
+        if (!f.IsInGroup("player_team"))
         {
             return false;
         }
@@ -411,7 +434,6 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
                 if (collider == p)
                 {
                     ret.Add(p);
-                    GD.Print(p.Name + " seen via raycast");
                 }
             }
             
@@ -420,6 +442,14 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
 
         return ret;
+    }
+
+    public void OnPickupAreaEntered(Node2D body)
+    {
+        if (body is Flag f && f.team == Team.PLAYER)
+        {
+            TryPickup(f);
+        }
     }
 
 }
