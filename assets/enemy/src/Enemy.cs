@@ -58,7 +58,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Export] public bool AUTO_RELOAD = true;
 
     [Export(PropertyHint.Range, "0.0f, 180.0f, 0.1f, radians_as_degrees")] public float AimVariance;
-    [Export(PropertyHint.Range, "0.0f, 360.0f, 0.1f, radians_as_degrees")] public float RotationSpeedPerSec;
+    [Export(PropertyHint.Range, "0.0f, 360.0f, 0.1f, radians_as_degrees")] public float RotationSpeedPerSec = Mathf.DegToRad(90.0f);
 
     [Export(PropertyHint.Range, "0.0f, 90.0f, 0.1f, radians_as_degrees")] public float ConeVisionAngle = Mathf.DegToRad(15.0f);
     [Export] public float PassiveVisionRadius = 600.0f;
@@ -325,11 +325,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     {
         if (!_reaimTimer.IsStopped())
         {
+            
             return false;
         }
         else
         {
-            _reaimTimer.Start();
+            
         }
 
         // check if we can fire / if we need to override
@@ -338,7 +339,6 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             if (overrideCurrent)
             {
                 _aimTween.Kill();
-                //_aimingToShoot = false;
             }
             else
             {
@@ -359,6 +359,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         // aim
         float time = Mathf.Abs(_weapon.AimDir.AngleTo(dir)) / RotationSpeedPerSec;
         _aimTween.TweenProperty(_weapon, "AimDir", dir, time);
+        _reaimTimer.Start();
         return true;
     }
 
