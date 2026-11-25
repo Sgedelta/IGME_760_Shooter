@@ -118,8 +118,10 @@ public partial class Level : Node2D
 		{
 			_flagInitialPositions.Add(f, f.GlobalPosition);
 			f.OnFlagReturn += () => ResetFlag(f);
+			f.OnFlagReturn += UpdateEnemyInfo;
 			f.Modulate = TeamColors[f.team];
 			f.OnFlagPickedUp += UpdateEnemyInfo;
+			f.OnFlagDropped += UpdateEnemyInfo;
 
         }
 
@@ -135,8 +137,12 @@ public partial class Level : Node2D
 		{
 			p.OnKilled += () => { 
 				OnRespawnRequested(p);
-				UpdateEnemyInfo();
-			};
+				foreach(Enemy e in enemiesInScene)
+				{
+					e.HasKilledPlayer = true;
+				}
+                UpdateEnemyInfo();
+            };
 		}
 
 		foreach (Enemy e in enemiesInScene)
@@ -170,6 +176,21 @@ public partial class Level : Node2D
 						return;
 					}
                 }
+			};
+
+			e.OnRequestFlagStandLocation += (team) =>
+			{
+				e.SeekArbitraryGolablPos(
+					FlagReturns.Where(fr => fr.team == team)
+					.OrderBy(
+						fr => fr.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
+					).First().GlobalPosition
+				);
+			};
+
+			e.OnDamageTaken += (_) =>
+			{
+				e.LookAtPosition(_players.OrderBy(p => p.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).First().GlobalPosition, 0, false);
 			};
 		}
 
@@ -277,7 +298,7 @@ public partial class Level : Node2D
 
 		// grab all other team
         Node2D[] oppositeTeamPlayers = (GetTree().GetNodesInGroup(teamString)).Where((obj) => obj is Player or Enemy).OfType<Node2D>().ToArray();
-		float[] posWeights = new float[oppositeTeamPlayers.Length];
+		float[] posWeights = new float[pArray.Count];
 
 		// get weights
 		for(int i = 0; i < pArray.Count; i++)
@@ -325,20 +346,35 @@ public partial class Level : Node2D
 
 		foreach (Enemy e in _enemies)
 		{
-			var agent = (Node)e.GoapBridge.Get("agent");
+			e.DistanceToNearestPlayerFlag = Flags.Where(f => f.team == Team.PLAYER).OrderBy(f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).FirstOrDefault().GlobalPosition.DistanceTo(e.GlobalPosition);
+            e.DistanceToNearestEnemyFlag = Flags.Where(f => f.team == Team.ENEMY).OrderBy(f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).FirstOrDefault().GlobalPosition.DistanceTo(e.GlobalPosition);
+
+
+            var agent = (Node)e.GoapBridge.Get("agent");
 			var ws = (Node)agent.Call("get_world_state");
 
 			// are any of the flags we want available
-			ws.Call("set_state", StateKeys.FLAG_AVAIL, !Flags.Where(f => f.team == Team.PLAYER).All(f => f.BeingCarried));
+			bool anyFlagAvail = !Flags.Where(f => f.team == Team.PLAYER).All(f => f.BeingCarried);
+			GD.Print($"Enemy {e.Name} sees any flag avail: {anyFlagAvail}");
 
-            // are we carrying a flag?
-            ws.Call("set_state", StateKeys.HAS_FLAG, Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e));
+            ws.Call("set_state", StateKeys.FLAG_AVAIL, anyFlagAvail);
+
+			// are we carrying a flag?
+			bool hasAFlag = Flags.Where(f => f.team == Team.PLAYER).Any(f => f.Carrier == e);
+            GD.Print($"Enemy {e.Name} sees having a flag: {hasAFlag}");
+            ws.Call("set_state", StateKeys.HAS_FLAG, hasAFlag);
 
             // are all of our flags at home
             ws.Call("set_state", StateKeys.FLAG_AT_HOME, Flags.Where(f => f.team == Team.ENEMY).All(f => f.OnStand));
 
-            // are any of our flags being carried
-            ws.Call("set_state", StateKeys.PLAYER_HAS_FLAG, Flags.Where(f => f.team == Team.ENEMY).Any(f => f.BeingCarried));
+			// are any of our flags being carried
+			bool playerHasFlag = Flags.Where(f => f.team == Team.ENEMY).Any(f => f.BeingCarried);
+            GD.Print($"Enemy {e.Name} sees player(s) having flag: {playerHasFlag}");
+            ws.Call("set_state", StateKeys.PLAYER_HAS_FLAG, playerHasFlag);
+
+			// can we see a player right now
+			ws.Call("set_state", StateKeys.FOUND_PLAYER, e.LastSensedPlayers.Count > 0);
+
 
 
         }

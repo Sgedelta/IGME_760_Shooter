@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://yeq4nyongi1n" path="res://assets/flags/sprites/flag.png" id="1_18p25"]
 [ext_resource type="Script" uid="uid://faeln5o6mxmc" path="res://assets/flags/src/Flag.cs" id="1_a3w08"]
-[ext_resource type="Texture2D" uid="uid://blotix5jeepl7" path="res://assets/flags/resources/return_progress_texture.tres" id="3_t7hmy"]
+[ext_resource type="Texture2D" uid="uid://bcnyn86wxn613" path="res://assets/flags/resources/return_progress_texture.tres" id="3_t7hmy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h7c14"]
 size = Vector2(37, 7)
@@ -12,7 +12,7 @@ radius = 2.0935726
 height = 86.574165
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a3w08"]
-radius = 50.0
+radius = 60.00833
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t7hmy"]
 radius = 250.0

@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://clx80moch4b57" path="res://assets/common/src/goals/score_flag.gd" id="5_e24bd"]
 [ext_resource type="Script" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
 [ext_resource type="Script" uid="uid://de0jcja8ycww6" path="res://assets/common/src/goals/stop_player.gd" id="6_e24bd"]
+[ext_resource type="Script" uid="uid://dim7i6qo3a2p0" path="res://assets/common/src/goals/return_our_taken_flag.gd" id="7_h8o35"]
 [ext_resource type="Script" uid="uid://dysm3rn05yi37" path="res://assets/common/src/actions/kill_player.gd" id="7_ph424"]
 [ext_resource type="Script" uid="uid://cspd4oxdiofyy" path="res://assets/common/src/actions/return_our_flag.gd" id="8_ct1qm"]
 [ext_resource type="Script" uid="uid://ewsptkcw5wpq" path="res://assets/common/src/actions/score_held_flag.gd" id="9_6w2sh"]
@@ -22,14 +23,27 @@ radius = 300.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_h8o35"]
 radius = 1500.0
 
+[sub_resource type="Gradient" id="Gradient_7vhbv"]
+offsets = PackedFloat32Array(0, 0.748, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lqefk"]
+gradient = SubResource("Gradient_7vhbv")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8ge1m"]
+radius = 97.3242
+
 [node name="Enemy" type="CharacterBody2D" unique_id=374600470 groups=["enemy_team"]]
 collision_layer = 2
 collision_mask = 17
 motion_mode = 1
 script = ExtResource("1_4gyqm")
 Speed = 200.0
-AimVariance = 0.17453292519943295
-RotationSpeedPerSec = 1.5707963267948966
 
 [node name="Visual" type="Sprite2D" parent="." unique_id=1875448243]
 self_modulate = Color(1, 0.19607843, 0, 1)
@@ -48,11 +62,17 @@ script = ExtResource("5_nmqyq")
 
 [node name="Goals" type="Node" parent="C# Bridge" unique_id=1329246907]
 
+[node name="ReturnTakenFlag" type="Node" parent="C# Bridge/Goals" unique_id=527517465]
+script = ExtResource("7_h8o35")
+priority = 25
+
 [node name="Score" type="Node" parent="C# Bridge/Goals" unique_id=2081677527]
 script = ExtResource("5_e24bd")
+priority = 10
 
 [node name="StopPlayer" type="Node" parent="C# Bridge/Goals" unique_id=974745692]
 script = ExtResource("6_e24bd")
+priority = 50
 
 [node name="Actions" type="Node" parent="C# Bridge" unique_id=1543241269]
 
@@ -95,3 +115,28 @@ shape = SubResource("CircleShape2D_h8o35")
 [node name="VisionCast" type="RayCast2D" parent="." unique_id=659612904]
 target_position = Vector2(1500, 0)
 collision_mask = 3
+
+[node name="VisionLight" type="PointLight2D" parent="." unique_id=1727429744]
+range_layer_min = -4
+range_layer_max = 1
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_lqefk")
+texture_scale = 3.0
+
+[node name="TerrainLight" type="PointLight2D" parent="." unique_id=226250976]
+range_layer_min = -4
+range_layer_max = 2
+range_item_cull_mask = 2
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_lqefk")
+texture_scale = 4.5
+
+[node name="PickupArea" type="Area2D" parent="." unique_id=2003864683]
+collision_layer = 2
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea" unique_id=874669156]
+shape = SubResource("CircleShape2D_8ge1m")
+
+[connection signal="body_entered" from="PickupArea" to="." method="OnPickupAreaEntered"]

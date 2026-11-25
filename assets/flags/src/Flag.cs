@@ -6,6 +6,7 @@ public partial class Flag : RigidBody2D, IPickupable
 {
     [Signal] public delegate void OnFlagReturnEventHandler();
     [Signal] public delegate void OnFlagPickedUpEventHandler();
+    [Signal] public delegate void OnFlagDroppedEventHandler();
 
     public ICarrier Carrier { get; private set; }
 
@@ -110,6 +111,7 @@ public partial class Flag : RigidBody2D, IPickupable
         _returnProgressBar.Visible = true;
         _returnAreaDisplay.Visible = true;
         ApplyImpulse(dropVel);
+        EmitSignal(SignalName.OnFlagDropped);
 
         return true;
     }

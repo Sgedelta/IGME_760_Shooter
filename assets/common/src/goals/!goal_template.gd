@@ -7,6 +7,8 @@ func _ready() -> void:
 
 # returns if this goal is a valid action, aka when this activates
 func is_valid() -> bool:
+	if not _world_state:
+		return false
 	return false;
 	# return _world_state.get_state(StateKeys.KEY, false)
 

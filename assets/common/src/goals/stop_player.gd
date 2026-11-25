@@ -14,7 +14,7 @@ func is_valid() -> bool:
 
 # get prio, or how important this goal is
 func get_priority() -> int:
-	return 50;
+	return priority;
 
 # what happens when this goal is achieved - should likely lower the prio
 func on_goal_achieved() -> void:
