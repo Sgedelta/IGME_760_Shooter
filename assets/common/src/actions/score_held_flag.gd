@@ -16,13 +16,13 @@ func _ready() -> void:
 
 # Called when goal is begun
 func enter() -> void:
-	_actor.guide_to_home()
+	bridge.guide_to_home()
 	pass;
 
 # Return true once the action is done, return false otherwise
 func perform(_delta) -> bool:
-	
-	return _world_state.get_state(StateKeys.HAS_FLAG, false);
+	bridge.guide_to_home()
+	return !_world_state.get_state(StateKeys.HAS_FLAG, true);
 
 # the cost of taking this step
 func get_cost(_blackboard) -> int:

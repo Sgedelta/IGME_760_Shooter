@@ -150,15 +150,19 @@ public partial class Level : Node2D
 			e.OnKilled += () =>
 			{
 				UpdateEnemyInfo();
-			};
+				e.ForceAgentRecalc();
+
+            };
 
 			e.OnRequestFlagLocation += (team) =>
 			{
-				e.SeekArbitraryGlobalPos(
-					Flags.Where(f => f.team == team)
+				Vector2 pos = Flags.Where(f => f.team == team)
 					.OrderBy(
 						f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
-					).First().GlobalPosition
+					).First().GlobalPosition;
+
+                e.SeekArbitraryGlobalPos(
+					pos
 				);
 			};
 
@@ -191,6 +195,7 @@ public partial class Level : Node2D
 			e.OnDamageTaken += (_) =>
 			{
 				e.LookAtPosition(_players.OrderBy(p => p.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)).First().GlobalPosition, 0, false);
+				UpdateEnemyInfo();
 			};
 		}
 
@@ -375,7 +380,18 @@ public partial class Level : Node2D
 			// can we see a player right now
 			ws.Call("set_state", StateKeys.FOUND_PLAYER, e.LastSensedPlayers.Count > 0);
 
+			// are we healthy?
+			if (e.HealthPercent < .333f)
+			{
+                ws.Call("set_state", StateKeys.IS_HEALTHY, false);
+            }
+			else if (e.HealthPercent > .666f)
+			{
+                ws.Call("set_state", StateKeys.IS_HEALTHY, true);
+            }
 
+			// are we winning?
+			ws.Call("set_state", StateKeys.IS_WINNING, Scores[Team.ENEMY] > Scores[Team.PLAYER]);
 
         }
 	}

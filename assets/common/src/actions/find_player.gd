@@ -18,7 +18,7 @@ func enter() -> void:
 
 # Return true once the action is done, return false otherwise
 func perform(_delta) -> bool:
-	
+	bridge.maintain_distance_from_player(10.0)
 	return bridge.get_seen_player_count() > 0;
 
 # the cost of taking this step

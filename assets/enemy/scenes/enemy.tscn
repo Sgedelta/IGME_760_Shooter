@@ -5,14 +5,17 @@
 [ext_resource type="PackedScene" uid="uid://bl33hbe7l4sex" path="res://assets/weapon/scenes/weapon.tscn" id="3_oq0ac"]
 [ext_resource type="Script" uid="uid://c48doc0kviaqu" path="res://addons/goap/goap_agent.gd" id="4_hw76b"]
 [ext_resource type="Script" uid="uid://clx80moch4b57" path="res://assets/common/src/goals/score_flag.gd" id="5_e24bd"]
-[ext_resource type="Script" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
+[ext_resource type="Script" uid="uid://c8w7nn33r57el" path="res://assets/common/src/goap_cs_bridge.gd" id="5_nmqyq"]
 [ext_resource type="Script" uid="uid://de0jcja8ycww6" path="res://assets/common/src/goals/stop_player.gd" id="6_e24bd"]
 [ext_resource type="Script" uid="uid://dim7i6qo3a2p0" path="res://assets/common/src/goals/return_our_taken_flag.gd" id="7_h8o35"]
 [ext_resource type="Script" uid="uid://dysm3rn05yi37" path="res://assets/common/src/actions/kill_player.gd" id="7_ph424"]
+[ext_resource type="Script" uid="uid://chp4yj1j1dusj" path="res://assets/common/src/goals/stay_alive.gd" id="8_8pwou"]
 [ext_resource type="Script" uid="uid://cspd4oxdiofyy" path="res://assets/common/src/actions/return_our_flag.gd" id="8_ct1qm"]
 [ext_resource type="Script" uid="uid://ewsptkcw5wpq" path="res://assets/common/src/actions/score_held_flag.gd" id="9_6w2sh"]
 [ext_resource type="Script" uid="uid://bc08mpmr10kbt" path="res://assets/common/src/actions/find_player.gd" id="11_h8o35"]
 [ext_resource type="Script" uid="uid://bfk1cvyr4ppo2" path="res://assets/common/src/actions/pickup_flag.gd" id="11_lqefk"]
+[ext_resource type="Script" uid="uid://dbs11acjjvphm" path="res://assets/common/src/actions/move_to_cover.gd" id="13_s2ukq"]
+[ext_resource type="Script" uid="uid://diqia2sy8yv84" path="res://assets/common/src/actions/wait_to_heal.gd" id="15_k4b81"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_27m30"]
 radius = 80.00625
@@ -21,7 +24,7 @@ radius = 80.00625
 radius = 300.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h8o35"]
-radius = 1500.0
+radius = 1185.5703
 
 [sub_resource type="Gradient" id="Gradient_7vhbv"]
 offsets = PackedFloat32Array(0, 0.748, 1)
@@ -36,12 +39,13 @@ fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8ge1m"]
-radius = 97.3242
+radius = 99.18165
 
 [node name="Enemy" type="CharacterBody2D" unique_id=374600470 groups=["enemy_team"]]
 collision_layer = 2
 collision_mask = 17
 motion_mode = 1
+wall_min_slide_angle = 0.5235988
 script = ExtResource("1_4gyqm")
 Speed = 200.0
 
@@ -54,6 +58,9 @@ texture = ExtResource("2_oq0ac")
 shape = SubResource("CircleShape2D_27m30")
 
 [node name="NavAgent" type="NavigationAgent2D" parent="." unique_id=1656022149]
+path_desired_distance = 2.0
+target_desired_distance = 1.0
+path_max_distance = 10.0
 
 [node name="Weapon" parent="." unique_id=625231334 instance=ExtResource("3_oq0ac")]
 
@@ -68,11 +75,15 @@ priority = 25
 
 [node name="Score" type="Node" parent="C# Bridge/Goals" unique_id=2081677527]
 script = ExtResource("5_e24bd")
-priority = 10
+priority = 20
 
 [node name="StopPlayer" type="Node" parent="C# Bridge/Goals" unique_id=974745692]
 script = ExtResource("6_e24bd")
-priority = 50
+priority = 30
+
+[node name="StayAlive" type="Node" parent="C# Bridge/Goals" unique_id=1832992443]
+script = ExtResource("8_8pwou")
+priority = 10
 
 [node name="Actions" type="Node" parent="C# Bridge" unique_id=1543241269]
 
@@ -91,6 +102,15 @@ metadata/_custom_type_script = "uid://xxf8uqedkykm"
 
 [node name="FindPlayer" type="Node" parent="C# Bridge/Actions" unique_id=1672128807]
 script = ExtResource("11_h8o35")
+metadata/_custom_type_script = "uid://xxf8uqedkykm"
+
+[node name="GoToCover" type="Node" parent="C# Bridge/Actions" unique_id=647559847]
+script = ExtResource("13_s2ukq")
+cost = 3
+metadata/_custom_type_script = "uid://xxf8uqedkykm"
+
+[node name="WaitToHeal" type="Node" parent="C# Bridge/Actions" unique_id=719956219]
+script = ExtResource("15_k4b81")
 metadata/_custom_type_script = "uid://xxf8uqedkykm"
 
 [node name="GoapAgent" type="Node" parent="C# Bridge" unique_id=1533001410 node_paths=PackedStringArray("actions_node", "goals_node")]
@@ -122,9 +142,10 @@ range_layer_max = 1
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 texture = SubResource("GradientTexture2D_lqefk")
-texture_scale = 3.0
+texture_scale = 1.3
 
 [node name="TerrainLight" type="PointLight2D" parent="." unique_id=226250976]
+visible = false
 range_layer_min = -4
 range_layer_max = 2
 range_item_cull_mask = 2

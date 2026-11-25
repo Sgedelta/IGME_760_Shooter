@@ -18,7 +18,9 @@ func is_valid() -> bool:
 
 # get prio, or how important this goal is
 func get_priority() -> int:
-	return priority;
+	if _world_state.get_state(StateKeys.HAS_FLAG, true):
+		return priority;
+	return priority / 2.0;
 
 # what happens when this goal is achieved - should likely lower the prio
 func on_goal_achieved() -> void:

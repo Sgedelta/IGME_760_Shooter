@@ -1,5 +1,7 @@
 extends GoapAction
 
+#never do this
+@onready var bridge = get_node("../../") as GoapBridge
 
 # Set effects and preconditions here
 func _ready() -> void:

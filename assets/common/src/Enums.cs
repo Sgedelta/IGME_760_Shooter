@@ -19,4 +19,6 @@ public class StateKeys
     public const string IS_FIGHTING = "is_fighting";
     public const string SCORED_FLAG = "scored_flag";
     public const string FLAG_AT_HOME = "flag_at_home";
+    public const string IS_HEALTHY = "is_healthy";
+    public const string IS_WINNING = "is_winning";
 }

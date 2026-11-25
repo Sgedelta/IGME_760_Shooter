@@ -41,8 +41,10 @@ func maintain_distance_from_player(dist : float ):
 	if !active:
 		return;
 	
+	if (actor.get("LastKnownPlayerPosition") as Vector2).distance_to(global_position) < dist:
+		return;
 	actor.call("SeekLastKnownPlayerPos")
-	actor.DistanceToPathEndToStop = dist;
+	
 	pass
 
 func go_to_our_flag():
@@ -50,8 +52,7 @@ func go_to_our_flag():
 	if !active:
 		return;
 	
-	actor.call("SeekReturnedFlag")
-	actor.DistanceToPathEndToStop = 0;
+	actor.call("SeekOurFlag")
 	pass
 
 func go_to_player_flag():
@@ -59,7 +60,6 @@ func go_to_player_flag():
 		return;
 	
 	actor.call("SeekPlayerFlag")
-	actor.DistanceToPathEndToStop = 0;
 	pass
 
 func guide_to_home():
@@ -68,6 +68,12 @@ func guide_to_home():
 	
 	actor.call("SeekOurFlagReturn")
 	pass
+
+func seek_cover():
+	if !active:
+		return;
+	
+	actor.call("SeekCover")
 
 func check_killed_player() -> bool:
 	if !active:
@@ -87,3 +93,9 @@ func get_dist_to_home() -> float:
 
 func get_if_flag_home() -> bool:
 	return agent.get_world_state().get_state(StateKeys.FLAG_AT_HOME, true);
+
+func get_agent_health() -> int:
+	return actor.Health;
+
+func get_agent_health_percent() -> float:
+	return actor.HealthPercent;

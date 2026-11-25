@@ -11,6 +11,7 @@ func _ready() -> void:
 
 # Called when goal is begun
 func enter() -> void:
+	bridge.maintain_distance_from_player(10.0)
 	pass;
 
 # Return true once the action is done, return false otherwise

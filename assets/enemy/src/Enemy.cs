@@ -16,6 +16,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Export] public float Speed { get; private set; } = 25.0f;
 
     public int Health { get; private set; } = 5;
+    public float HealthPercent { get { return (float)Health / (float)_MaxHealth; } }
     private int _MaxHealth;
 
     [Export] public float RegenSpeed { get; private set; } = 7;
@@ -27,7 +28,12 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     public Vector2 TargetGlobalPos
     {
         get { return _navAgent.TargetPosition; }
-        set { _navAgent.TargetPosition = value;}
+        set {
+            if (_navAgent.TargetPosition != value)
+            {
+                _navAgent.TargetPosition = value;
+            }
+        }
     }
 
     public bool CanPickup { get; private set; }
@@ -94,6 +100,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     private Timer _reaimTimer;
     private Timer _rehideTimer;
+    private Timer _reseekTimer; 
     private bool _aimingToShoot;
 
     public Array<Player> LastSensedPlayers = new();
@@ -101,12 +108,13 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     public float DistanceToNearestPlayerFlag; // set from level
     public float DistanceToNearestEnemyFlag; // set from level
 
-    public float DistanceToPathEndToStop = 0.0f;
 
     public bool HasKilledPlayer = false;
 
     public override void _Ready()
     {
+        Respawning = false;
+
         level = GetTree().Root.GetNode<Level>("Level");
         OnKilled += OnEnemyKilled;
 
@@ -128,13 +136,17 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         _rng = new RandomNumberGenerator();
 
         _reaimTimer = new Timer();
-        _reaimTimer.WaitTime = .1f;
+        _reaimTimer.WaitTime = .2f;
         _reaimTimer.OneShot = true;
         AddChild(_reaimTimer);
         _rehideTimer = new Timer();
         _rehideTimer.WaitTime = .5f;
         _rehideTimer.OneShot = true;
         AddChild(_rehideTimer);
+        _reseekTimer = new Timer();
+        _reseekTimer.WaitTime = .15f;
+        _reseekTimer.OneShot = true;
+        AddChild(_reseekTimer);
 
         Callable.From(FirstFrameSetup).CallDeferred();
 
@@ -179,8 +191,9 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             if (TimePaused <= 0)
             {
                 Respawning = false;
-                this.Modulate = new Color(1, 0, 0, 1f);
+                this.Modulate = new Color(1, 1, 1, 1f);
             }
+            return;
         }
         //FireAtPosition(Vector2.Zero, false);
         
@@ -190,8 +203,17 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         {
             LastKnownPlayerPosition = seenPlayers.First().GlobalPosition;
             FireAtPosition(LastKnownPlayerPosition, true);
-            
+            ((Node)((Node)GoapBridge.Get("agent")).Call("get_world_state")).Call("set_state", StateKeys.FOUND_PLAYER, true);
         }
+        else
+        {
+            ((Node)((Node)GoapBridge.Get("agent")).Call("get_world_state")).Call("set_state", StateKeys.FOUND_PLAYER, false);
+        }
+
+        //if(Carrying != null)
+        //{
+        //    ((Node)((Node)GoapBridge.Get("agent")).Call("get_world_state")).Call("set_state", StateKeys.HAS_FLAG, true);
+        //}
 
         if( (!IsInstanceValid(_aimTween) || (IsInstanceValid(_aimTween) && !_aimingToShoot)) && !_navAgent.IsNavigationFinished())
         {
@@ -202,7 +224,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     public override void _PhysicsProcess(double delta)
 	{
         // movement 
-        if(!(_navAgent.IsNavigationFinished() || _navAgent.GetPathLength() < DistanceToPathEndToStop) && !Respawning)
+        if(!(_navAgent.IsNavigationFinished()) && !Respawning)
         {
             Vector2 direction = GlobalPosition.DirectionTo(_navAgent.GetNextPathPosition());
 
@@ -217,11 +239,23 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public void SeekPlayerFlag()
     {
+        if(!_reseekTimer.IsStopped())
+        {
+            return;
+        }
+
+        _reseekTimer.Start();
         EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.PLAYER);
     }
 
     public void SeekOurFlag()
     {
+        if (!_reseekTimer.IsStopped())
+        {
+            return;
+        }
+
+        _reseekTimer.Start();
         EmitSignal(SignalName.OnRequestFlagLocation, (int)Team.ENEMY);
     }
 
@@ -239,17 +273,35 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public void SeekLastKnownPlayerPos()
     {
+        if (!_reseekTimer.IsStopped())
+        {
+            return;
+        }
+
+        _reseekTimer.Start();
         SeekArbitraryGlobalPos(LastKnownPlayerPosition);
     }
 
     public void SeekPlayerFlagReturn()
     {
+        if (!_reseekTimer.IsStopped())
+        {
+            return;
+        }
+
+        _reseekTimer.Start();
         EmitSignal(SignalName.OnRequestFlagStandLocation, (int)Team.PLAYER);
 
     }
 
     public void SeekOurFlagReturn()
     {
+        if (!_reseekTimer.IsStopped())
+        {
+            return;
+        }
+
+        _reseekTimer.Start();
         EmitSignal(SignalName.OnRequestFlagStandLocation, (int)Team.ENEMY);
 
     }
@@ -299,6 +351,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     {
         if (!Respawning)
         {
+
             GD.Print($"{Name}: Ow! took {damage} damage");
             Health -= damage;
 
@@ -313,8 +366,11 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
                 {
                     TryDrop(Carrying);
                 }
+
+                _aimingToShoot = false;
+
                 EmitSignal(SignalName.OnKilled);
-                
+               
             }
         }
 
@@ -339,6 +395,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             if (overrideCurrent)
             {
                 _aimTween.Kill();
+                _aimingToShoot = false;
             }
             else
             {
@@ -371,13 +428,14 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
             _weapon.Reload();
             return;
         }
-        _aimingToShoot = true;
+        
         if (!LookAtPosition(targetGlobalPos, _rng.RandfRange(-AimVariance, AimVariance), overrideCurrent))
         {
             return;
         }
 
         // fire
+        _aimingToShoot = true;
         _aimTween.Finished += _weapon.TryFire;
         _aimTween.Finished += () => { _aimingToShoot = false; };
     }
@@ -391,10 +449,10 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         }
 
         // now, see if we are touching it. We cannot pickup flags we are not touching
-        if (!_touchingFlags.Contains(f))
-        {
-            return false;
-        }
+        // if (!_touchingFlags.Contains(f))
+        // {
+        //     return false;
+        // }
 
         // now, check the group. We can only pick up flags of the enemy team
         if (!f.IsInGroup("player_team"))
@@ -504,4 +562,10 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         }
     }
 
+
+    public void ForceAgentRecalc()
+    {
+        _navAgent.TargetPosition = _navAgent.TargetPosition;
+        _navAgent.GetNextPathPosition();
+    }
 }

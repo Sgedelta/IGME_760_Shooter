@@ -103,6 +103,10 @@ public partial class Player : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public override void _Ready()
     {
+        Respawning = false;
+        TimePaused = 0;
+
+
         level = GetTree().Root.GetNode<Level>("Level");
         _weapon = GetNode<Weapon>("Weapon");
         _weapon.WeaponTeam = Team.PLAYER;
