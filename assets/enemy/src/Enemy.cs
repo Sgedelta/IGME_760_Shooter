@@ -239,7 +239,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public void SeekLastKnownPlayerPos()
     {
-        SeekArbitraryGolablPos(LastKnownPlayerPosition);
+        SeekArbitraryGlobalPos(LastKnownPlayerPosition);
     }
 
     public void SeekPlayerFlagReturn()

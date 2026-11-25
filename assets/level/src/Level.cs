@@ -155,7 +155,7 @@ public partial class Level : Node2D
 			e.OnRequestFlagLocation += (team) =>
 			{
 				e.SeekArbitraryGlobalPos(
-					Flags.Where(f => (int)f.team == team)
+					Flags.Where(f => f.team == team)
 					.OrderBy(
 						f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
 					).First().GlobalPosition
@@ -180,7 +180,7 @@ public partial class Level : Node2D
 
 			e.OnRequestFlagStandLocation += (team) =>
 			{
-				e.SeekArbitraryGolablPos(
+				e.SeekArbitraryGlobalPos(
 					FlagReturns.Where(fr => fr.team == team)
 					.OrderBy(
 						fr => fr.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
