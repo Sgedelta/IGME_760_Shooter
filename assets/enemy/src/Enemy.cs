@@ -31,6 +31,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
         set {
             if (_navAgent.TargetPosition != value)
             {
+                GD.Print("Target Pos Updated");
                 _navAgent.TargetPosition = value;
             }
         }
@@ -110,6 +111,8 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
 
     public bool HasKilledPlayer = false;
+
+    [Export] private Node2D DebugNextPathPosMarker;
 
     public override void _Ready()
     {
@@ -223,10 +226,16 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public override void _PhysicsProcess(double delta)
 	{
+      
+        // done here to ensure internal update
+        Vector2 next = _navAgent.GetNextPathPosition();
+
+        DebugNextPathPosMarker.GlobalPosition = next;
+
         // movement 
-        if(!(_navAgent.IsNavigationFinished()) && !Respawning)
+        if (!(_navAgent.IsNavigationFinished()) && !Respawning)
         {
-            Vector2 direction = GlobalPosition.DirectionTo(_navAgent.GetNextPathPosition());
+            Vector2 direction = GlobalPosition.DirectionTo(next);
 
             MoveInDir(direction);
         }
@@ -379,7 +388,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public bool LookAtPosition(Vector2 targetGlobalPos, float rotationChange, bool overrideCurrent)
     {
-        if (!_reaimTimer.IsStopped())
+        if (!overrideCurrent && !_reaimTimer.IsStopped())
         {
             
             return false;
