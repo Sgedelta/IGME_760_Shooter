@@ -12,6 +12,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     [Signal] public delegate void OnRequestCoverLocationEventHandler();
     [Signal] public delegate void OnRequestFlagLocationEventHandler(Team flagTeam);
     [Signal] public delegate void OnRequestFlagStandLocationEventHandler(Team flagStandTeam);
+    [Signal] public delegate void RequestFlagLocationUpdateEventHandler();
 
     [Export] public float Speed { get; private set; } = 25.0f;
 
@@ -108,7 +109,7 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
 
     public float DistanceToNearestPlayerFlag; // set from level
     public float DistanceToNearestEnemyFlag; // set from level
-
+    public Vector2 NearestEnemyFlagGlobalPos; // set from level;
 
     public bool HasKilledPlayer = false;
 
@@ -576,5 +577,23 @@ public partial class Enemy : CharacterBody2D, IDamagable, IMover, ICarrier
     {
         _navAgent.TargetPosition = _navAgent.TargetPosition;
         _navAgent.GetNextPathPosition();
+    }
+
+
+    public float GetPathDistToGlobalPoint(Vector2 globalPoint)
+    {
+        var path = NavigationServer2D.MapGetPath(GetWorld2D().NavigationMap, GlobalPosition, globalPoint, true);
+        float dist = 0;
+        for (int i = 1; i < path.Count()-1; i++)
+        {
+            dist += path[i - 1].DistanceTo(path[i]);
+        }
+
+        return dist;
+    }
+
+    public void UpdateFlagLocations()
+    {
+        EmitSignal(SignalName.RequestFlagLocationUpdate);
     }
 }

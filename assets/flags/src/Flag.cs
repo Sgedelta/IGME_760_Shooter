@@ -26,6 +26,10 @@ public partial class Flag : RigidBody2D, IPickupable
 
     public bool OnStand = true;
 
+    private VisibleOnScreenNotifier2D _visibleNotifier;
+    private Sprite2D _offscreenArrow;
+    private float _offscreenArrowPadding = 50;
+
     public bool BeingCarried
     {
         get; private set;
@@ -41,6 +45,8 @@ public partial class Flag : RigidBody2D, IPickupable
 	{
         _returnProgressBar = GetNode<TextureProgressBar>("ReturnProgress");
         _returnAreaDisplay = GetNode<Sprite2D>("%ReturnAreaDisplay");
+        _visibleNotifier = GetNode<VisibleOnScreenNotifier2D>("ScreenNotifier");
+        _offscreenArrow = GetNode<Sprite2D>("OffscreenArrow");
 
         if(IsInGroup("enemy_team"))
         {
@@ -64,6 +70,25 @@ public partial class Flag : RigidBody2D, IPickupable
         }
         
 	}
+
+    public override void _Process(double delta)
+    {
+        // only show the arrow if we are not being carried and we are off the bases
+        if (!BeingCarried && !OnStand)
+        {
+            // make sure visibility is okay
+            if (_visibleNotifier.IsOnScreen() && _offscreenArrow.Visible)
+            {
+                _offscreenArrow.Visible = false;
+            }
+            else if (!_visibleNotifier.IsOnScreen() && !_offscreenArrow.Visible)
+            {
+                _offscreenArrow.Visible = true;
+            }
+
+            PositionOffscreenArrow(GetViewport().GetCamera2D(), _offscreenArrowPadding);
+        }
+    }
 
     public bool Pickup(ICarrier by)
     {
@@ -155,6 +180,8 @@ public partial class Flag : RigidBody2D, IPickupable
         _returnProgressBar.Visible = false;
         _returnAreaDisplay.Visible = false;
         _returnProgressBar.Value = 360;
+        _offscreenArrow.Visible = false;
+        _offscreenArrow.Position = Vector2.Zero;
         CheckReturnTween(); 
     }
 
@@ -236,6 +263,43 @@ public partial class Flag : RigidBody2D, IPickupable
         }
         GD.Print("after exit of ", other.Name, ": ", _ourTeamInReturnCount, ", ", _otherTeamInReturnCount);
         CheckReturnTween();
+    }
+
+    public void PositionOffscreenArrow(Camera2D c, float padding)
+    {
+        if (_visibleNotifier.IsOnScreen())
+        {
+            return;
+        }
+
+        // put arrow on camera
+        _offscreenArrow.GlobalPosition = c.GlobalPosition;
+        var dir = (GlobalPosition - c.GlobalPosition).Normalized();
+
+        var angle = dir.Angle();
+
+        // point arrow
+        _offscreenArrow.Rotation = angle;
+
+        // get bounds
+        var boundRect = c.GetViewportRect();
+
+        // length to edge in dir
+        float absSin = Mathf.Abs(Mathf.Sin(angle));
+        float absCos = Mathf.Abs(Mathf.Cos(angle));
+        float lengthToEdge = 0.0f;
+
+        if (boundRect.Size.X / 2 * absSin <= boundRect.Size.Y / 2 * absCos)
+        {
+            lengthToEdge = boundRect.Size.X / 2.0f / absCos;
+        }
+        else
+        {
+            lengthToEdge = boundRect.Size.Y / 2.0f / absSin;
+        }
+
+        _offscreenArrow.GlobalPosition += dir * (lengthToEdge - padding);
+
     }
 
 

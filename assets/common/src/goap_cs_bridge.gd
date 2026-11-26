@@ -36,6 +36,11 @@ func get_dist_to_enemy_flag() -> float:
 	
 	return actor.get("DistanceToNearestEnemyFlag");
 
+func get_nearest_enemy_flag_pos() -> Vector2:
+	actor.call("UpdateFlagLocations");
+	
+	return actor.get("NearestEnemyFlagGlobalPos");
+
 func maintain_distance_from_player(dist : float ):
 	
 	if !active:
@@ -99,3 +104,6 @@ func get_agent_health() -> int:
 
 func get_agent_health_percent() -> float:
 	return actor.HealthPercent;
+
+func get_path_dist_to_gloabl_point(point : Vector2) -> float:
+	return actor.call("GetPathDistToGlobalPoint", point);

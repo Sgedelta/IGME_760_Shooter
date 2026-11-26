@@ -166,6 +166,17 @@ public partial class Level : Node2D
 				);
 			};
 
+			e.RequestFlagLocationUpdate += () =>
+			{
+				Vector2 pos = Flags.Where(f => f.team == Team.ENEMY)
+					.OrderBy(
+						f => f.GlobalPosition.DistanceSquaredTo(e.GlobalPosition)
+					).First().GlobalPosition;
+
+				e.NearestEnemyFlagGlobalPos = pos;
+
+			};
+
 			e.OnRequestCoverLocation += () =>
 			{
 				var sortedPositions = _coverPositions.OrderBy(p => p.DistanceSquaredTo(e.GlobalPosition));

@@ -1,5 +1,7 @@
 extends GoapGoal
 
+#never do this
+@onready var bridge = get_node("../../") as GoapBridge
 
 # set desired state here
 func _ready() -> void:
@@ -18,6 +20,14 @@ func is_valid() -> bool:
 
 # get prio, or how important this goal is
 func get_priority() -> int:
+	# if we know we cannot reach it, never do this..
+	var d = bridge.get_path_dist_to_gloabl_point(bridge.get_nearest_enemy_flag_pos());
+	
+	print("distance is ", d);
+	#numbers here are based on speed and flag return time. not good to hardcode but I don't want to make it work better rn
+	if d >= ((200 * 10) + 50): 
+		return 0
+	
 	# if not winning, prioritize this
 	if !_world_state.get_state(StateKeys.IS_WINNING, false):
 		return priority;
